@@ -3,6 +3,8 @@ const MessageTray = imports.ui.messageTray;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
+var uuid = 'twma@zenozeng.com';
+
 var helper = (function() {
     var log = function(text) {
         if(typeof text !== "string") {
@@ -15,6 +17,15 @@ var helper = (function() {
         source.notify(notification);
     };
     var cat = function(filename, callback) {
+
+        // relative path support
+        var userExtensionsPath = GLib.build_filenamev([global.userdatadir, 'extensions/'+uuid+'/']);
+        if(filename.indexOf('/') !== 0) {
+            filename = userExtensionsPath + filename;
+        }
+
+        log(filename);
+
         let loop = GLib.MainLoop.new(null, false);
         let f = Gio.file_new_for_path(filename);
         f.load_contents_async(null, function(f, res) {
@@ -31,17 +42,24 @@ var helper = (function() {
         });
         loop.run();
     };
-    return {log: log, cat: cat};
+    var exec = function() {
+    };
+    return {log: log, cat: cat, exec: exec};
 })();
 
-var eval = function(file) {
-
+var exec = function(file) {
+    helper.log(userExtensionsDir);
 };
 
 
 function init() {
-    helper.log('hello world!!!');
-    helper.cat('/home/zenozeng/.shadowsockslog');
+    helper.cat('/home/zenozeng/.shadowsockslog', function(data) {
+        helper.log(data);
+    });
+    helper.cat('test.coffee', function(data) {
+        helper.log(data);
+    });
+    // todo: livereload config file
 }
 
 function enable() {}

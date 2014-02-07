@@ -23,3 +23,5 @@ Source Code can be viewed in /usr/share/gnome-shell/js/ui
 - https://developer.gnome.org/gio/unstable/
 
 - https://git.gnome.org/browse/gjs/tree/examples/gio-cat.js
+
+- http://blog.fpmurphy.com/2011/05/hack-to-fix-gnome-shell-stylesheet-problems.html

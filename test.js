@@ -1,1 +1,0 @@
-helper.log('hey! this is test');

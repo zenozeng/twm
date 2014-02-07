@@ -10,6 +10,9 @@ const Gio = imports.gi.Gio;
 
 var uuid = 'twma@zenozeng.com';
 
+// global variable to store modules
+var modules = {};
+
 var helper = (function() {
     var log = function(text) {
         if(typeof text !== "string") {
@@ -36,7 +39,7 @@ var helper = (function() {
             try {
                 contents = f.load_contents_finish(res)[1];
             } catch (e) {
-                log("*** ERROR: " + e.message);
+                log("ERROR: "+ filename + ": " + e.message);
                 loop.quit();
                 return;
             }
@@ -68,9 +71,13 @@ var helper = (function() {
     return {log: log, cat: cat, exec: exec};
 })();
 
+modules.helper = helper;
+
 function init() {
-    helper.exec('coffee-script.min.js', function() {
-        helper.exec('wm/main.coffee');
+    helper.exec('lib/coffee-script.min.js', function() {
+        helper.exec('lib/async.js', function() {
+            helper.exec('main.coffee');
+        });
     });
     // for debug
     // right click on panel to reload

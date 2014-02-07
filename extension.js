@@ -1,3 +1,8 @@
+// File Overview
+//
+// Define a set of helper functions (log, cat, exec)
+// Then load Coffee Compiler, and load main.coffee
+
 const Main = imports.ui.main;
 const MessageTray = imports.ui.messageTray;
 const GLib = imports.gi.GLib;
@@ -24,8 +29,6 @@ var helper = (function() {
             filename = userExtensionsPath + filename;
         }
 
-        log(filename);
-
         let loop = GLib.MainLoop.new(null, false);
         let f = Gio.file_new_for_path(filename);
         f.load_contents_async(null, function(f, res) {
@@ -42,24 +45,32 @@ var helper = (function() {
         });
         loop.run();
     };
-    var exec = function() {
+    var exec = function(file, callback) {
+        cat(file, function(content) {
+            try {
+                // do not use (Function(content))(); or the variables may not be exposed.
+                if(file.split('.').pop() === 'coffee') {
+                    content = CoffeeScript.compile(content);
+                }
+                // fix window.attachEvent for Coffee Compiler
+                var window = {};
+                window.attachEvent = function() {};
+                eval(content);
+            } catch(e) {
+                log("Error in "+file+": "+e);
+            }
+            if(callback) {
+                callback();
+            }
+        });
     };
     return {log: log, cat: cat, exec: exec};
 })();
 
-var exec = function(file) {
-    helper.log(userExtensionsDir);
-};
-
-
 function init() {
-    helper.cat('/home/zenozeng/.shadowsockslog', function(data) {
-        helper.log(data);
+    helper.exec('coffee-script.min.js', function() {
+        helper.exec('wm/main.coffee');
     });
-    helper.cat('test.coffee', function(data) {
-        helper.log(data);
-    });
-    // todo: livereload config file
 }
 
 function enable() {}

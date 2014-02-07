@@ -2,7 +2,7 @@
 
 ## Config File
 
-Coffee Script is supported by default, CoffeeScript Compiler v1.6.3 was included.
+Coffee Script is supported by default, CoffeeScript Compiler v1.7.1 was included.
 
 ## Ref
 

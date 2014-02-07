@@ -1,7 +1,7 @@
 // File Overview
 //
 // Define a set of helper functions (log, cat, exec)
-// Then load Coffee Compiler, and load main.coffee
+// Then load Coffee Compiler, and exec wm/main.coffee
 
 const Main = imports.ui.main;
 const MessageTray = imports.ui.messageTray;
@@ -48,14 +48,15 @@ var helper = (function() {
     var exec = function(file, callback) {
         cat(file, function(content) {
             try {
-                // do not use (Function(content))(); or the variables may not be exposed.
                 if(file.split('.').pop() === 'coffee') {
                     content = CoffeeScript.compile(content);
                 }
                 // fix window.attachEvent for Coffee Compiler
                 var window = {};
                 window.attachEvent = function() {};
-                eval(content);
+                // do not use (Function(content))() directly
+                // or the variables may not be exposed.
+                eval("(function() {"+content+"})()");
             } catch(e) {
                 log("Error in "+file+": "+e);
             }
@@ -71,6 +72,9 @@ function init() {
     helper.exec('coffee-script.min.js', function() {
         helper.exec('wm/main.coffee');
     });
+    // for debug
+    // right click on panel to reload
+    Main.panel.actor.connect('button-release-event', init);
 }
 
 function enable() {}

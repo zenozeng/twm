@@ -1,7 +1,7 @@
 # todo: function to reload config
 {helper} = modules
 
-helper.log 'TWMA V14'
+helper.log 'TWMA V18'
 
 monitor = Main.layoutManager.primaryMonitor
 
@@ -13,16 +13,13 @@ monitor = Main.layoutManager.primaryMonitor
 #
 ##########################################
 
-modules.spawn = (cmd) ->
-  if DEBUG
-    helper.log cmd
-  GLib.spawn_command_line_async cmd
+modules.spawn = (cmd) -> GLib.spawn_command_line_async cmd
 
 helper.exec "api/window.coffee", ->
   helper.exec "api/keybindings.coffee", ->
     {Window, keybindings} = modules
 
-    keybindings.add ["<Supre>o"], -> helper.log "hello keybinding!"
+    keybindings.add "<Super>o", -> helper.log "hello keybinding 2!"
 
     # (new Window()).getAll().forEach (win) ->
     #   win.setArea 0, 0, 100, 100

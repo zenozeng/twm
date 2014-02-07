@@ -13,14 +13,19 @@ monitor = Main.layoutManager.primaryMonitor
 #
 ##########################################
 
-modules.spawn = (cmd) -> GLib.spawn_command_line_async cmd
+modules.spawn = (cmd) ->
+  if DEBUG
+    helper.log cmd
+  GLib.spawn_command_line_async cmd
 
 helper.exec "api/window.coffee", ->
   helper.exec "api/keybindings.coffee", ->
     {Window, keybindings} = modules
-    (new Window()).getAll().forEach (win) ->
-      win.setArea 0, 0, 100, 100
-      modules.spawn "google-chrome"
+
+    keybindings.add ["<Supre>o"], -> helper.log "hello keybinding!"
+
+    # (new Window()).getAll().forEach (win) ->
+    #   win.setArea 0, 0, 100, 100
 
 
 # API.window.get().forEach(window) ->

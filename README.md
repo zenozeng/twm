@@ -24,6 +24,13 @@ Source Code can be viewed in /usr/share/gnome-shell/js/ui
 
 `grep set_ * | grep actor`
 
+
+### Keybinding
+
+- http://www.mibus.org/2013/02/15/making-gnome-shell-plugins-save-their-config/
+
+- https://git.gnome.org/browse/mutter/tree/src/core/keybindings.c
+
 ### GIO
 
 - https://developer.gnome.org/gio/unstable/

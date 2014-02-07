@@ -7,11 +7,20 @@ const Main = imports.ui.main;
 const MessageTray = imports.ui.messageTray;
 const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
+const ExtensionUtils = imports.misc.extensionUtils;
+const Extension = ExtensionUtils.getCurrentExtension();
 
+// let schemaDir = Extension.dir.get_child('xdg').get_child('data').get_child('glib-2.0').get_child('schemas');
 var uuid = 'twma@zenozeng.com';
+
+var DEBUG = true;
 
 // global variable to store modules
 var modules = {};
+
+// global variable for function call from outside
+// exposed to global
+global.twm = {functions: {}};
 
 var helper = (function() {
     var log = function(text) {
@@ -70,6 +79,11 @@ var helper = (function() {
     };
     return {log: log, cat: cat, exec: exec};
 })();
+
+global.twm.functions.log = function() {
+    helper.log('test');
+}
+
 
 modules.helper = helper;
 

@@ -1,1 +1,7 @@
-{"shell-version": ["3.8.4"], "uuid": "twma@zenozeng.com", "name": "twma", "description": "twma"}
+{
+    "shell-version": ["3.8.4"],
+    "uuid": "twma@zenozeng.com",
+    "name": "twma",
+    "description": "twma",
+    "settings-schema": "org.gnome.shell.extensions.twm"
+}

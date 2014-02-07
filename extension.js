@@ -75,9 +75,7 @@ modules.helper = helper;
 
 function init() {
     helper.exec('lib/coffee-script.min.js', function() {
-        helper.exec('lib/async.js', function() {
-            helper.exec('main.coffee');
-        });
+        helper.exec('main.coffee');
     });
     // for debug
     // right click on panel to reload

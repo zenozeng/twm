@@ -1,7 +1,7 @@
 # todo: function to reload config
 {helper} = modules
 
-helper.log 'hey, this is tw/main 7'
+helper.log 'TWMA V13'
 
 monitor = Main.layoutManager.primaryMonitor
 
@@ -13,9 +13,10 @@ monitor = Main.layoutManager.primaryMonitor
 #
 ##########################################
 
-apis = ["window", "monitor"]
-fns = apis.map (util) -> (-> helper.exec "api/#{util}.coffee")
-async.parallel fns, helper.log "loaded"
+helper.exec "api/window.coffee", ->
+  {Window} = modules
+  (new Window()).getAll().forEach (win) ->
+    win.setArea 0, 0, 100, 100
 
 
 # API.window.get().forEach(window) ->

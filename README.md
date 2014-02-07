@@ -2,6 +2,10 @@
 
 Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.10 yet.
 
+## Keybindings
+
+Keybindings Config are based on gsettings & gdbus, and it will overwrite your custom shortcuts in Gnome Settings.  Backup them first!
+
 ## Config File
 
 Coffee Script is supported by default, CoffeeScript Compiler v1.7.1 was included.

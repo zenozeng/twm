@@ -1,7 +1,1 @@
-{
-    "uuid": "test@zenozeng.com",
-    "name": "test",
-    "description": "test",
-    "url": "test",
-    "shell-version": [ "3.8.4" ]
-}
+{"shell-version": ["3.8.4"], "uuid": "twma@zenozeng.com", "name": "twma", "description": "twma"}

@@ -1,7 +1,7 @@
 # todo: function to reload config
 {helper} = modules
 
-helper.log 'TWMA V13'
+helper.log 'TWMA V14'
 
 monitor = Main.layoutManager.primaryMonitor
 
@@ -13,10 +13,14 @@ monitor = Main.layoutManager.primaryMonitor
 #
 ##########################################
 
+modules.spawn = (cmd) -> GLib.spawn_command_line_async cmd
+
 helper.exec "api/window.coffee", ->
-  {Window} = modules
-  (new Window()).getAll().forEach (win) ->
-    win.setArea 0, 0, 100, 100
+  helper.exec "api/keybindings.coffee", ->
+    {Window, keybindings} = modules
+    (new Window()).getAll().forEach (win) ->
+      win.setArea 0, 0, 100, 100
+      modules.spawn "google-chrome"
 
 
 # API.window.get().forEach(window) ->

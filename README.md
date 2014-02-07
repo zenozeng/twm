@@ -1,8 +1,14 @@
 # TWM
 
+Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.10 yet.
+
 ## Config File
 
 Coffee Script is supported by default, CoffeeScript Compiler v1.7.1 was included.
+
+## License
+
+GPL v3
 
 ## Ref
 

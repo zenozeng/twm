@@ -79,7 +79,7 @@ function init() {
     });
     // for debug
     // right click on panel to reload
-    Main.panel.actor.connect('button-release-event', init);
+    // Main.panel.actor.connect('button-release-event', init);
 }
 
 function enable() {}

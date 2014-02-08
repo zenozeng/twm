@@ -7,6 +7,8 @@
 # Usage:
 # keybinds.add "<Super>o", -> helper.log "hello!"
 #
+# You can use dconf-editor for debug
+#
 ######################################
 
 {helper, spawn} = modules
@@ -27,11 +29,16 @@ keybindings.add = (keybinding, callback) ->
 
 # write to dconf using gsettings
 keybindings.apply = ->
+
   # object 2 array for conivence
   cmds = []
   for keybinding, cmd of commands
     cmds.push [cmd, keybinding]
-  helper.log JSON.stringify(cmds)
+
+  # seems that the first keybinding will nerver become effective
+  # so add a fake keybinding as workround
+  cmds.unshift "", ""
+
   # set custom keybindings
   customs = [0...cmds.length].map (index) -> "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom#{index}/"
   spawn "gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings '#{JSON.stringify customs}'"

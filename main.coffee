@@ -22,9 +22,9 @@ helper.exec "api/window.coffee", ->
   helper.exec "api/keybindings.coffee", ->
     {Window, keybindings} = modules
 
+    keybindings.add "<Super>e", -> spawn "emacsclient -c"
     keybindings.add "<Super>c", -> spawn "google-chrome"
     keybindings.add "<Super>q", -> helper.log "hello keybinding 2!"
-    keybindings.add "<Super>e", -> spawn "emacsclient -c"
     keybindings.add "<Super>l", -> Main.lookingGlass.toggle()
     keybindings.add "<Super>Return", -> spawn "gnome-terminal"
 

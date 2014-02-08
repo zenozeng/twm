@@ -1,23 +1,29 @@
-######################################
-#
-# A dirty Hack for Keybinding support
-#
-# Tested in Gnome Shell 3.8.4 (Debian Sid)
-#
-# Usage:
-# keybinds.add "<Super>o", -> helper.log "hello!"
-#
-# You can use dconf-editor for debug
-#
-######################################
+###
+A dirty Hack for Keybinding API
+
+Use dconf-editor for debug
+###
 
 {helper, spawn} = modules
 
 keybindings = {}
-
 commands = {}
 fnIndex = 0;
 
+###
+Add a keybinding
+
+@example Assign <Super>+G to lunch google-chrome
+  var keybindings = modules.keybindings;
+  var spawn = modules.spawn;
+  var callback = function() {
+    spawn("google-chrome");
+  };
+  keybindings.add("<Super>c", callback);
+
+@param [String] keybinding the keybinding string
+@param [Function] callback the function to be called when keydown
+###
 keybindings.add = (keybinding, callback) ->
   fnIndex++
   fn = "fn#{fnIndex}"
@@ -25,9 +31,12 @@ keybindings.add = (keybinding, callback) ->
   cmd = "gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval 'global.twm.functions[\\\"#{fn}\\\"]()'"
   commands[keybinding] = cmd
 
-  # keybindings.apply()
+###
+Apply keybindings, should be called after all keybindings was added.
+Config are written using gsettings.
 
-# write to dconf using gsettings
+@private
+###
 keybindings.apply = ->
 
   # object 2 array for conivence
@@ -48,6 +57,5 @@ keybindings.apply = ->
     spawn "gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:#{customs[i]} command \"#{cmds[i][0]}\""
     spawn "gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:#{customs[i]} name 'twm:#{i}'"
 
-global.twm.apply = keybindings.apply
-
+# exposed to moudles
 modules.keybindings = keybindings

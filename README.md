@@ -2,6 +2,10 @@
 
 Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.10 yet.
 
+## Doc
+
+I am using Coffee Script & using [codo](https://github.com/coffeedoc/codo) as documentation generator.
+
 ## Keybindings
 
 Keybindings Config are based on gsettings & gdbus, and it will overwrite your custom shortcuts in Gnome Settings.  Backup them first!

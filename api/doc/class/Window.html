@@ -40,7 +40,7 @@
       </a>
     </span>
     <span class='desc'>
-      get current window 
+      Get current window 
     </span>
   </li>
   <li>
@@ -52,7 +52,7 @@
       </a>
     </span>
     <span class='desc'>
-      get all windows which is shown in current workspace 
+      Get all windows which is shown in current workspace 
     </span>
   </li>
   <li>
@@ -76,7 +76,7 @@
       </a>
     </span>
     <span class='desc'>
-      activate window 
+      Activate window 
     </span>
   </li>
   <li>
@@ -88,7 +88,7 @@
       </a>
     </span>
     <span class='desc'>
-      destory current window 
+      Destory window 
     </span>
   </li>
 </ul>
@@ -109,6 +109,10 @@
       Get current window&#39;s wmClass
     </h4>
     <pre><code class='coffeescript'>var wmClass = (new Window()).current().wmClass;</code></pre>
+    <h4>
+      Get current window&#39;s meta_window
+    </h4>
+    <pre><code class='coffeescript'>var wmClass = (new Window()).current().meta;</code></pre>
   </div>
 </div>
 <div class='tags'>
@@ -125,7 +129,7 @@
       <br>
     </p>
     <div class='docstring'>
-  <p>get current window</p>
+  <p>Get current window</p>
 </div>
 <div class='tags'>
 </div>
@@ -138,7 +142,16 @@
       <br>
     </p>
     <div class='docstring'>
-  <p>get all windows which is shown in current workspace</p>
+  <p>Get all windows which is shown in current workspace</p>
+  <div class='examples'>
+    <h3>Examples:</h3>
+    <h4>
+      Move every windows in current workspace to (0, 0) and resize to 100*100
+    </h4>
+    <pre><code class='coffeescript'>(new Window()).getAll().forEach(function(win){
+  win.setArea(0, 0, 100, 100);
+});</code></pre>
+  </div>
 </div>
 <div class='tags'>
 </div>
@@ -203,7 +216,7 @@
       <br>
     </p>
     <div class='docstring'>
-  <p>activate window</p>
+  <p>Activate window</p>
 </div>
 <div class='tags'>
 </div>
@@ -216,7 +229,7 @@
       <br>
     </p>
     <div class='docstring'>
-  <p>destory current window</p>
+  <p>Destory window</p>
 </div>
 <div class='tags'>
 </div>
@@ -224,7 +237,7 @@
 </div>
     </div>
     <div id='footer'>
-  February 08, 14 17:59:59 by
+  February 08, 14 18:03:49 by
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>

@@ -7,6 +7,9 @@ class Window
 
   @example Get current window's wmClass
     var wmClass = (new Window()).current().wmClass;
+
+  @example Get current window's meta_window
+    var wmClass = (new Window()).current().meta;
   ###
   constructor: (@window) ->
     if @window?
@@ -14,12 +17,21 @@ class Window
       @wmClass = @meta.get_wm_class()
     this
 
-  # get current window
+  ###
+  Get current window
+  ###
   current: ->
     wins = @getAll().filter (win) -> win.window.get_meta_window().has_focus()
     wins[0]
 
-  # get all windows which is shown in current workspace
+  ###
+  Get all windows which is shown in current workspace
+
+  @example Move every windows in current workspace to (0, 0) and resize to 100*100
+    (new Window()).getAll().forEach(function(win){
+      win.setArea(0, 0, 100, 100);
+    });
+  ###
   getAll: ->
     currentWorkspaceIndex = global.screen.get_active_workspace_index()
     windows = global.get_window_actors().filter (window) ->
@@ -42,12 +54,16 @@ class Window
     @window.get_meta_window().move_resize_frame true, x, y, width, height
     this
 
-  # activate window
+  ###
+  Activate window
+  ###
   activate: ->
     Main.activateWindow @window
     this
 
-  # destory current window
+  ###
+  Destory window
+  ###
   destory: -> @window.destory()
 
 modules.Window = Window

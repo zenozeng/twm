@@ -31,6 +31,7 @@ helper.exec "api/window.coffee", ->
     # for testing
     keybindings.add "<Super>t", ->
       current = (new Window()).current()
+      helper.log current.wmClass
       current.setArea(10, 10, 100, 100)
 
     keybindings.apply()

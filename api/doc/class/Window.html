@@ -45,18 +45,6 @@
   </li>
   <li>
     <span class='signature'>
-      <a href='#wmClass-dynamic'>
-        #
-(void)
-<b>wmClass</b><span>()</span>
-      </a>
-    </span>
-    <span class='desc'>
-      get wm class 
-    </span>
-  </li>
-  <li>
-    <span class='signature'>
       <a href='#getAll-dynamic'>
         #
 (void)
@@ -113,7 +101,18 @@
 <b>constructor</b><span>(window)</span>
       <br>
     </p>
-    
+    <div class='docstring'>
+  <p>Constructor</p>
+  <div class='examples'>
+    <h3>Examples:</h3>
+    <h4>
+      Get current window&#39;s wmClass
+    </h4>
+    <pre><code class='coffeescript'>var wmClass = (new Window()).current().wmClass;</code></pre>
+  </div>
+</div>
+<div class='tags'>
+</div>
   </div>
 </div>
       <h2>Instance Method Details</h2>
@@ -127,19 +126,6 @@
     </p>
     <div class='docstring'>
   <p>get current window</p>
-</div>
-<div class='tags'>
-</div>
-  </div>
-  <div class='method_details'>
-    <p class='signature' id='wmClass-dynamic'>
-      #
-(void)
-<b>wmClass</b><span>()</span>
-      <br>
-    </p>
-    <div class='docstring'>
-  <p>get wm class</p>
 </div>
 <div class='tags'>
 </div>
@@ -180,7 +166,7 @@
         (<tt>Number</tt>)
       </span>
       &mdash;
-      <span class='desc'>position x </span>
+      <span class='desc'>position x (px) </span>
     </li>
     <li>
       <span class='name'>y</span>
@@ -188,7 +174,7 @@
         (<tt>Number</tt>)
       </span>
       &mdash;
-      <span class='desc'>position y </span>
+      <span class='desc'>position y (px) </span>
     </li>
     <li>
       <span class='name'>width</span>
@@ -196,7 +182,7 @@
         (<tt>Number</tt>)
       </span>
       &mdash;
-      <span class='desc'>width (border &amp; shadow should not be included) </span>
+      <span class='desc'>width (px) (border &amp; shadow should not be included) </span>
     </li>
     <li>
       <span class='name'>height</span>
@@ -204,7 +190,7 @@
         (<tt>Number</tt>)
       </span>
       &mdash;
-      <span class='desc'>height (border &amp; shadow should not be included) </span>
+      <span class='desc'>height (px) (border &amp; shadow should not be included) </span>
     </li>
   </ul>
 </div>
@@ -238,7 +224,7 @@
 </div>
     </div>
     <div id='footer'>
-  February 08, 14 17:39:00 by
+  February 08, 14 17:59:59 by
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>

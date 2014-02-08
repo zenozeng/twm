@@ -2,15 +2,22 @@ Meta = imports.gi.Meta
 
 class Window
 
-  constructor: (@window) -> this
+  ###
+  Constructor
+
+  @example Get current window's wmClass
+    var wmClass = (new Window()).current().wmClass;
+  ###
+  constructor: (@window) ->
+    if @window?
+      @meta = @window.get_meta_window()
+      @wmClass = @meta.get_wm_class()
+    this
 
   # get current window
   current: ->
     wins = @getAll().filter (win) -> win.window.get_meta_window().has_focus()
     wins[0]
-
-  # get wm class
-  wmClass: -> @window.get_meta_window().get_wm_class()
 
   # get all windows which is shown in current workspace
   getAll: ->

@@ -33,6 +33,30 @@
       <ul class='summary'>
   <li>
     <span class='signature'>
+      <a href='#current-dynamic'>
+        #
+(void)
+<b>current</b><span>()</span>
+      </a>
+    </span>
+    <span class='desc'>
+      get current window 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#wmClass-dynamic'>
+        #
+(void)
+<b>wmClass</b><span>()</span>
+      </a>
+    </span>
+    <span class='desc'>
+      get wm class 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
       <a href='#getAll-dynamic'>
         #
 (void)
@@ -52,19 +76,31 @@
       </a>
     </span>
     <span class='desc'>
-      设置四角坐标 坐标为相对坐标，从顶栏下面那个点作为 （0,0），然后是不包括阴影以及border的
-
+      Set the position and size of the window 
     </span>
   </li>
   <li>
     <span class='signature'>
-      <a href='#kill-dynamic'>
+      <a href='#activate-dynamic'>
         #
 (void)
-<b>kill</b><span>()</span>
+<b>activate</b><span>()</span>
       </a>
     </span>
     <span class='desc'>
+      activate window 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#destory-dynamic'>
+        #
+(void)
+<b>destory</b><span>()</span>
+      </a>
+    </span>
+    <span class='desc'>
+      destory current window 
     </span>
   </li>
 </ul>
@@ -82,6 +118,32 @@
 </div>
       <h2>Instance Method Details</h2>
       <div class='methods'>
+  <div class='method_details'>
+    <p class='signature' id='current-dynamic'>
+      #
+(void)
+<b>current</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>get current window</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='wmClass-dynamic'>
+      #
+(void)
+<b>wmClass</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>get wm class</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
   <div class='method_details'>
     <p class='signature' id='getAll-dynamic'>
       #
@@ -103,25 +165,80 @@
       <br>
     </p>
     <div class='docstring'>
-  <p>设置四角坐标
-坐标为相对坐标，从顶栏下面那个点作为 （0,0），然后是不包括阴影以及border的</p>
+  <div class='note'>
+    <strong>Note:</strong>
+    (0, 0) was at the left-bottom of the top bar 
+  </div>
+  <p>Set the position and size of the window</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>x</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>position x </span>
+    </li>
+    <li>
+      <span class='name'>y</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>position y </span>
+    </li>
+    <li>
+      <span class='name'>width</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>width (border &amp; shadow should not be included) </span>
+    </li>
+    <li>
+      <span class='name'>height</span>
+      <span class='type'>
+        (<tt>Number</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>height (border &amp; shadow should not be included) </span>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='activate-dynamic'>
+      #
+(void)
+<b>activate</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>activate window</p>
 </div>
 <div class='tags'>
 </div>
   </div>
   <div class='method_details'>
-    <p class='signature' id='kill-dynamic'>
+    <p class='signature' id='destory-dynamic'>
       #
 (void)
-<b>kill</b><span>()</span>
+<b>destory</b><span>()</span>
       <br>
     </p>
-    
+    <div class='docstring'>
+  <p>destory current window</p>
+</div>
+<div class='tags'>
+</div>
   </div>
 </div>
     </div>
     <div id='footer'>
-  February 08, 14 16:18:08 by
+  February 08, 14 17:39:00 by
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>

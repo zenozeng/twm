@@ -1,12 +1,16 @@
-###################################
-#
-# GJS Window API Wrapper
-#
-###################################
+Meta = imports.gi.Meta
 
 class Window
 
   constructor: (@window) -> this
+
+  # get current window
+  current: ->
+    wins = @getAll().filter (win) -> win.window.get_meta_window().has_focus()
+    wins[0]
+
+  # get wm class
+  wmClass: -> @window.get_meta_window().get_wm_class()
 
   # get all windows which is shown in current workspace
   getAll: ->
@@ -16,12 +20,27 @@ class Window
       (window.get_meta_window() and window.get_meta_window().is_on_all_workspaces())
     windows.map (win) -> new Window(win)
 
-  # 设置四角坐标
-  # 坐标为相对坐标，从顶栏下面那个点作为 （0,0），然后是不包括阴影以及border的
+  ###
+  Set the position and size of the window
+
+  @param [Number] x position x (px)
+  @param [Number] y position y (px)
+  @param [Number] width width (px) (border & shadow should not be included)
+  @param [Number] height height (px) (border & shadow should not be included)
+  @note (0, 0) was at the left-bottom of the top bar
+  ###
   setArea: (x, y, width, height) ->
     y += Main.panel.actor.height
-    @window.set_position x, y
+    @window.get_meta_window().unmaximize(Meta.MaximizeFlags.VERTICAL | Meta.MaximizeFlags.HORIZONTAL)
+    @window.get_meta_window().move_resize_frame true, x, y, width, height
+    this
 
-  kill: -> true
+  # activate window
+  activate: ->
+    Main.activateWindow @window
+    this
+
+  # destory current window
+  destory: -> @window.destory()
 
 modules.Window = Window

@@ -80,20 +80,12 @@ var helper = (function() {
     return {log: log, cat: cat, exec: exec};
 })();
 
-global.twm.functions.log = function() {
-    helper.log('test');
-}
-
-
 modules.helper = helper;
 
 function init() {
     helper.exec('lib/coffee-script.min.js', function() {
         helper.exec('main.coffee');
     });
-    // for debug
-    // right click on panel to reload
-    // Main.panel.actor.connect('button-release-event', init);
 }
 
 function enable() {}

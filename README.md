@@ -5,6 +5,7 @@ Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.
 ## Doc
 
 I am using Coffee Script & using [codo](https://github.com/coffeedoc/codo) as documentation generator.
+Docs can be found in api/doc
 
 ## Keybindings
 

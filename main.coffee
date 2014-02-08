@@ -4,7 +4,7 @@ modules.spawn = (cmd) -> GLib.spawn_command_line_async cmd
 
 {helper, spawn} = modules
 
-helper.log 'TWMA V18'
+helper.log 'TWMA V20'
 
 monitor = Main.layoutManager.primaryMonitor
 
@@ -17,16 +17,21 @@ monitor = Main.layoutManager.primaryMonitor
 ##########################################
 
 
-
 helper.exec "api/window.coffee", ->
   helper.exec "api/keybindings.coffee", ->
     {Window, keybindings} = modules
 
     keybindings.add "<Super>e", -> spawn "emacsclient -c"
     keybindings.add "<Super>c", -> spawn "google-chrome"
-    keybindings.add "<Super>q", -> helper.log "hello keybinding 2!"
     keybindings.add "<Super>l", -> Main.lookingGlass.toggle()
     keybindings.add "<Super>Return", -> spawn "gnome-terminal"
+    # reload this extension
+    keybindings.add "<Super>r", -> init()
+
+    # for testing
+    keybindings.add "<Super>t", ->
+      current = (new Window()).current()
+      current.setArea(10, 10, 100, 100)
 
     keybindings.apply()
 

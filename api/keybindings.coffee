@@ -27,7 +27,11 @@ Add a keybinding
 keybindings.add = (keybinding, callback) ->
   fnIndex++
   fn = "fn#{fnIndex}"
-  global.twm.functions[fn] = callback
+  global.twm.functions[fn] = ->
+    try
+      callback?()
+    catch e
+      helper.log e
   cmd = "gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval 'global.twm.functions[\\\"#{fn}\\\"]()'"
   commands[keybinding] = cmd
 

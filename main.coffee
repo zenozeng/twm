@@ -1,3 +1,5 @@
+GLib = imports.gi.GLib
+
 # todo: function to reload config
 
 modules.spawn = (cmd) -> GLib.spawn_command_line_async cmd
@@ -28,7 +30,7 @@ monitor = Main.layoutManager.primaryMonitor
 helper.exec "api/window.coffee", ->
   helper.exec "api/keybindings.coffee", ->
 
-    {Window, keybindings} = modules
+    {Window, keybindings, spawn} = modules
 
     keybindings.add "<Super>e", -> spawn "emacsclient -c"
     keybindings.add "<Super>c", -> spawn "google-chrome"

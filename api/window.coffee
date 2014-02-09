@@ -81,7 +81,7 @@ class Window
   ###
   Control whether window should be decorated with a title bar, resize controls, etc.
 
-  @param [Bool] setting Decorate the window when true, undecorate these when false
+  @param [Bool] setting Decorate the window when true, undecorate when false
   @see http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html
   ###
   setDecorated: (setting) ->

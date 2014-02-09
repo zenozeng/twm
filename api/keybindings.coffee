@@ -50,7 +50,7 @@ keybindings.apply = ->
 
   # seems that the first keybinding will nerver become effective
   # so add a fake keybinding as workround
-  cmds.unshift "", ""
+  cmds.unshift ["", ""]
 
   # set custom keybindings
   customs = [0...cmds.length].map (index) -> "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom#{index}/"

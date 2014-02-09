@@ -27,6 +27,7 @@ monitor = Main.layoutManager.primaryMonitor
 
 helper.exec "api/window.coffee", ->
   helper.exec "api/keybindings.coffee", ->
+
     {Window, keybindings} = modules
 
     keybindings.add "<Super>e", -> spawn "emacsclient -c"
@@ -34,67 +35,43 @@ helper.exec "api/window.coffee", ->
     keybindings.add "<Super>l", -> Main.lookingGlass.toggle()
     keybindings.add "<Super>Return", -> spawn "gnome-terminal"
     keybindings.add "<Super>k", -> (new Window()).current().destroy()
-    # reload this extension
-    keybindings.add "<Super>r", -> init()
-
-    getLayout = (num) ->
-      false
-
-
-    global.setLayout = ->
-      wins = (new Window()).getAll()
-      wins = wins.filter (win) -> win.wmClass isnt 'Gnome-shell'
-      monitor = Main.layoutManager.primaryMonitor
-      avaliable =
-        width: monitor.width
-        height: monitor.height - Main.panel.actor.height
-
-      helper.log avaliable
-      helper.log wins.length
-      global.t1 = wins
-      if wins.length is 1
-        wins[0].setArea 0, 0, avaliable.width, avaliable.height
-      if wins.length is 2
-        wins[0].setArea 0, 0, avaliable.width/2, avaliable.height
-        wins[1].setArea avaliable.width * 0.5, 0, avaliable.width * 0.5, avaliable.height
+    keybindings.add "<Super>r", -> init() # reload this extension
 
     # for testing
     keybindings.add "<Super>t", ->
       current = (new Window()).current()
-      current.setDecorated(true)
-      # global.cw = current
-      helper.log "cap"
+      helper.log "Done"
 
-    # for testing
-    keybindings.add "<Super>q", ->
-      current = (new Window()).current()
-      current.setDecorated(false)
-      # global.cw = current
-      helper.log "cap"
+    # load layouts
+    modules.layouts = {}
+    helper.exec "layouts/2-column.coffee", ->
 
-    keybindings.apply()
+      applyLayout = ->
+        wins = (new Window()).getAll()
+        wins = wins.filter (win) -> win.wmClass isnt 'Gnome-shell'
 
-    # (new Window()).getAll().forEach (win) ->
-    #   win.setArea 0, 0, 100, 100
+        layout = modules.layouts["2-column"]
+        areas = layout(wins.length)
 
+        monitor = Main.layoutManager.primaryMonitor
 
-# API.window.get().forEach(window) ->
-#   window.set_position(0, 100);
+        avaliableWidth = monitor.width
+        avaliableHeight = monitor.height
 
-  # TWM.windowActors.get().forEach(function(windowActor) {
-  #     // get borderWidth
-  #     // see /usr/share/gnome-shell/js/ui/boxpointer.js
-  #     // this.actor = new St.Bin({ x_fill: true,
-  #     //                           y_fill: true });
-  #     // let themeNode = this.actor.get_theme_node();
-  #     // let borderWidth = themeNode.get_length('-arrow-border-width');
-  #     windowActor.set_position(0, 100); // 绝对坐标，注意顶栏
-  #     // windowActor.set_area(100, 100, 300, 300);
-  #     windowActor.set_size(width, height);
-  #     // 锚点
-  #     // windowActor.move_anchor_point(0, 0);
-  # });
+        wins.forEach (win, index) ->
+          {x, y, width, height} = areas[index]
+          x = x * avaliableWidth
+          y = y * avaliableHeight
+          width = width * avaliableWidth
+          height = height * avaliableHeight
+          helper.log {x: x, y: y, width: width, height: height}
+          win.setDecorated false
+          win.setArea x, y, width, height
 
+      keybindings.add "<Super>t", ->
+        applyLayout()
+        helper.log "applyLayout"
+      keybindings.apply()
 
 # load layouts
 

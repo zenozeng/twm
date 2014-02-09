@@ -50,23 +50,34 @@ helper.exec "api/window.coffee", ->
         wins = (new Window()).getAll()
         wins = wins.filter (win) -> win.wmClass isnt 'Gnome-shell'
 
-        layout = modules.layouts["2-column"]
-        areas = layout(wins.length)
+        # remove title bar
+        wins.forEach (win) -> win.setDecorated false
 
-        monitor = Main.layoutManager.primaryMonitor
+        delay = (time, callback) ->
+          GLib.timeout_add GLib.PRIORITY_DEFAULT, time, ->
+            callback?()
 
-        avaliableWidth = monitor.width
-        avaliableHeight = monitor.height
+        # a delay to make sure window are already setDecorated(false)
+        delayTime = 100
 
-        wins.forEach (win, index) ->
-          {x, y, width, height} = areas[index]
-          x = x * avaliableWidth
-          y = y * avaliableHeight
-          width = width * avaliableWidth
-          height = height * avaliableHeight
-          helper.log {x: x, y: y, width: width, height: height}
-          win.setDecorated false
-          win.setArea x, y, width, height
+        delay delayTime, ->
+
+          layout = modules.layouts["2-column"]
+          areas = layout(wins.length)
+
+          monitor = Main.layoutManager.primaryMonitor
+
+          avaliableWidth = monitor.width
+          avaliableHeight = monitor.height - Main.panel.actor.height
+
+          wins.forEach (win, index) ->
+            {x, y, width, height} = areas[index]
+            x = x * avaliableWidth
+            y = y * avaliableHeight
+            width = width * avaliableWidth
+            height = height * avaliableHeight
+            # helper.log {x: x, y: y, width: width, height: height}
+            win.setArea x, y, width, height
 
       keybindings.add "<Super>t", ->
         applyLayout()

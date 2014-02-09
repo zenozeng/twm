@@ -1,7 +1,15 @@
 # todo: function to reload config
 
 modules.spawn = (cmd) -> GLib.spawn_command_line_async cmd
-
+modules.spawnSync = (cmd) ->
+  try
+    result = GLib.spawn_command_line_sync cmd
+    if result[0]
+      result[1].toString()
+    else
+      helper.log result
+  catch e
+    helper.log e
 {helper, spawn} = modules
 
 helper.log 'TWMA V20'
@@ -25,14 +33,44 @@ helper.exec "api/window.coffee", ->
     keybindings.add "<Super>c", -> spawn "google-chrome"
     keybindings.add "<Super>l", -> Main.lookingGlass.toggle()
     keybindings.add "<Super>Return", -> spawn "gnome-terminal"
+    keybindings.add "<Super>k", -> (new Window()).current().destroy()
     # reload this extension
     keybindings.add "<Super>r", -> init()
+
+    getLayout = (num) ->
+      false
+
+
+    global.setLayout = ->
+      wins = (new Window()).getAll()
+      wins = wins.filter (win) -> win.wmClass isnt 'Gnome-shell'
+      monitor = Main.layoutManager.primaryMonitor
+      avaliable =
+        width: monitor.width
+        height: monitor.height - Main.panel.actor.height
+
+      helper.log avaliable
+      helper.log wins.length
+      global.t1 = wins
+      if wins.length is 1
+        wins[0].setArea 0, 0, avaliable.width, avaliable.height
+      if wins.length is 2
+        wins[0].setArea 0, 0, avaliable.width/2, avaliable.height
+        wins[1].setArea avaliable.width * 0.5, 0, avaliable.width * 0.5, avaliable.height
 
     # for testing
     keybindings.add "<Super>t", ->
       current = (new Window()).current()
-      helper.log current.wmClass
-      current.setArea(10, 10, 100, 100)
+      current.setDecorated(true)
+      # global.cw = current
+      helper.log "cap"
+
+    # for testing
+    keybindings.add "<Super>q", ->
+      current = (new Window()).current()
+      current.setDecorated(false)
+      # global.cw = current
+      helper.log "cap"
 
     keybindings.apply()
 

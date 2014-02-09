@@ -81,10 +81,69 @@
   </li>
   <li>
     <span class='signature'>
-      <a href='#destory-dynamic'>
+      <a href='#getXid-dynamic'>
         #
 (void)
-<b>destory</b><span>()</span>
+<b>getXid</b><span>()</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Get XID of window actor (using xwininfo) 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#setDecorated-dynamic'>
+        #
+(void)
+<b>setDecorated</b><span>(setting)</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Control whether window should be decorated with a title bar, resize controls, etc. 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#maximize-dynamic'>
+        #
+(void)
+<b>maximize</b><span>()</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Maximize 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#unmaximize-dynamic'>
+        #
+(void)
+<b>unmaximize</b><span>()</span>
+      </a>
+    </span>
+    <span class='desc'>
+      Unmaximize 
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#move-dynamic'>
+        #
+(void)
+<b>move</b><span>(direction)</span>
+      </a>
+    </span>
+    <span class='desc'>
+    </span>
+  </li>
+  <li>
+    <span class='signature'>
+      <a href='#destroy-dynamic'>
+        #
+(void)
+<b>destroy</b><span>()</span>
       </a>
     </span>
     <span class='desc'>
@@ -98,7 +157,7 @@
     <p class='signature' id='constructor-dynamic'>
       #
 (void)
-<b>constructor</b><span>(window)</span>
+<b>constructor</b><span>(actor)</span>
       <br>
     </p>
     <div class='docstring'>
@@ -216,19 +275,119 @@
       <br>
     </p>
     <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Fix this 
+  </div>
   <p>Activate window</p>
 </div>
 <div class='tags'>
 </div>
   </div>
   <div class='method_details'>
-    <p class='signature' id='destory-dynamic'>
+    <p class='signature' id='getXid-dynamic'>
       #
 (void)
-<b>destory</b><span>()</span>
+<b>getXid</b><span>()</span>
       <br>
     </p>
     <div class='docstring'>
+  <p>Get XID of window actor (using xwininfo)</p>
+</div>
+<div class='tags'>
+  <h3>See also:</h3>
+  <ul class='see'>
+    <li>
+      <a href='https://bitbucket.org/mathematicalcoffee/maximus-gnome-shell-extension/src/712915b37e7ac42d3593f58d97ef00b341d165fb/maximus@mathematical.coffee.gmail.com/extension.js?at=stable#cl-113'>https:&#47;&#47;bitbucket.org&#47;mathematicalcoffee&#47;maximus-gnome-shell-extension&#47;src&#47;712915b37e7ac42d3593f58d97ef00b341d165fb&#47;maximus@mathematical.coffee.gmail.com&#47;extension.js?at=stable#cl-113</a>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='setDecorated-dynamic'>
+      #
+(void)
+<b>setDecorated</b><span>(setting)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Control whether window should be decorated with a title bar, resize controls, etc.</p>
+</div>
+<div class='tags'>
+  <h3>Parameters:</h3>
+  <ul class='param'>
+    <li>
+      <span class='name'>setting</span>
+      <span class='type'>
+        (<tt>Bool</tt>)
+      </span>
+      &mdash;
+      <span class='desc'>Decorate the window when true, undecorate these when false </span>
+    </li>
+  </ul>
+  <h3>See also:</h3>
+  <ul class='see'>
+    <li>
+      <a href='http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html'>http:&#47;&#47;mathematicalcoffee.blogspot.com&#47;2012&#47;05&#47;automatically-undecorate-maximised.html</a>
+    </li>
+  </ul>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='maximize-dynamic'>
+      #
+(void)
+<b>maximize</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Maximize</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='unmaximize-dynamic'>
+      #
+(void)
+<b>unmaximize</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <p>Unmaximize</p>
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='move-dynamic'>
+      #
+(void)
+<b>move</b><span>(direction)</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Fix this 
+  </div>
+  
+</div>
+<div class='tags'>
+</div>
+  </div>
+  <div class='method_details'>
+    <p class='signature' id='destroy-dynamic'>
+      #
+(void)
+<b>destroy</b><span>()</span>
+      <br>
+    </p>
+    <div class='docstring'>
+  <div class='note todo'>
+    <strong>TODO:</strong>
+    Fix this 
+  </div>
   <p>Destory window</p>
 </div>
 <div class='tags'>
@@ -237,7 +396,7 @@
 </div>
     </div>
     <div id='footer'>
-  February 08, 14 18:03:49 by
+  February 09, 14 21:10:42 by
   <a href='https://github.com/coffeedoc/codo' title='CoffeeScript API documentation generator'>
     Codo
   </a>

@@ -46,9 +46,12 @@ helper.exec "api/window.coffee", ->
     modules.layouts = {}
     helper.exec "layouts/2-column.coffee", ->
 
+    # TODO: Support blacklist in Config File
+    blackList = (win) -> win.wmClass isnt 'Gnome-shell'
+
       applyLayout = ->
         wins = (new Window()).getAll()
-        wins = wins.filter (win) -> win.wmClass isnt 'Gnome-shell'
+        wins = wins.filter (win) -> blackList win
 
         # remove title bar
         wins.forEach (win) -> win.setDecorated false

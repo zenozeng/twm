@@ -12,7 +12,7 @@ modules.spawnSync = (cmd) ->
     helper.log e
 {helper, spawn} = modules
 
-helper.log 'TWMA V20'
+helper.log 'TWMA V22'
 
 monitor = Main.layoutManager.primaryMonitor
 
@@ -49,7 +49,7 @@ helper.exec "api/window.coffee", ->
     # TODO: Support blacklist in Config File
     blackList = (win) -> win.wmClass isnt 'Gnome-shell'
 
-      applyLayout = ->
+    applyLayout = ->
         wins = (new Window()).getAll()
         wins = wins.filter (win) -> blackList win
 

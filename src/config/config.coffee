@@ -2,7 +2,7 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 spawn = helper.spawn
-defalutConfig = Extension.imports.config.defalut.config
+defalutConfig = Extension.imports.config["default-config"].config
 fs = Extension.imports.api.fs.fs
 
 class Config

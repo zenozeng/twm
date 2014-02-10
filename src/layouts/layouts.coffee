@@ -17,10 +17,19 @@ class Layouts
   ###
   set: (layoutName, layoutFunc) -> @layouts[layoutName] = layoutFunc
 
+
+  ###
+  Unset Layout
+
+  @param [String] layoutName Layout Name
+  ###
+  unset: (layoutName) -> @layouts[layoutName] = null
+
   ###
   List all avaliable layouts, returns an array like ["2-column", "3-column"]
   ###
   list: ->
     layouts = []
-    layouts.push key for key, value of @layouts
+    for key, value of @layouts
+      layouts.push key if value?
     layouts

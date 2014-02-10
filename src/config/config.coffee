@@ -21,8 +21,7 @@ class Config
     else
       @create()
 
-    inject = "var Extension = imports.misc.extensionUtils.extensions[#{uuid}];"
-    config = (Function(inject + js + ';return config;'))()
+    config = (Function(js + ';return config;'))()
 
   ###
   Cp config/defalut.js to ~/.twm/twm.js

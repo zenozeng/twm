@@ -7,8 +7,6 @@ Extension = ExtensionUtils.getCurrentExtension();
 
 helper = Extension.imports.helper;
 
-global.t1 = Extension;
-
 Window = Extension.imports.api.window.Window;
 
 keybindings = Extension.imports.api.keybindings;
@@ -22,15 +20,16 @@ init = function() {
     functions: {}
   };
   try {
-    return config = new Config;
+    config = new Config;
   } catch (_error) {
     e = _error;
-    return helper.log(e);
+    helper.log(e);
   }
+  return false;
 };
 
 enable = function() {
-  return helper.log("hey");
+  return false;
 };
 
 disable = function() {

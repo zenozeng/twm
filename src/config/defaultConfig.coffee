@@ -3,9 +3,9 @@ Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 spawn = helper.spawn
 Window = Extension.imports.api.window.Window
-Layouts = Extension.imports.layouts.layouts.Layouts
+LayoutManager = Extension.imports.layouts.layoutManager.LayoutManager
 
-layouts = new Layouts
+layouts = new LayoutManager
 layouts.set "2-column", Extension.imports.layouts["2-column"].layout
 layouts.set "3-column", Extension.imports.layouts["3-column"].layout
 

@@ -11,13 +11,13 @@ helper = Extension.imports.helper;
 
 spawn = helper.spawn;
 
-defalutConfig = Extension.imports.config["default-config"].config;
+defalutConfig = Extension.imports.config.defaultConfig.config;
 
 fs = Extension.imports.api.fs;
 
 Config = (function() {
   function Config() {
-    var HOME, PATH, config, filename, js, key, value;
+    var HOME, PATH, config, e, filename, js, key, value;
     HOME = helper.spawnSync("sh -c 'echo $HOME'");
     PATH = (HOME + '/.twm').replace('\n', '');
     if (fs.existsSync(PATH + '/twm.js')) {
@@ -28,7 +28,12 @@ Config = (function() {
     } else {
       this.create();
     }
-    config = (Function(js + ';return config;'))();
+    try {
+      config = (Function(js + ';return config;'))();
+    } catch (_error) {
+      e = _error;
+      helper.log("Error found in your config file: " + e);
+    }
     for (key in defalutConfig) {
       value = defalutConfig[key];
       if (config[key] == null) {

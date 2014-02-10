@@ -3,7 +3,7 @@ Extension = ExtensionUtils.getCurrentExtension()
 uuid = Extension.uuid
 helper = Extension.imports.helper
 spawn = helper.spawn
-defalutConfig = Extension.imports.config["default-config"].config
+defalutConfig = Extension.imports.config.defaultConfig.config
 fs = Extension.imports.api.fs
 
 class Config
@@ -21,7 +21,10 @@ class Config
     else
       @create()
 
-    config = (Function(js + ';return config;'))()
+    try
+      config = (Function(js + ';return config;'))()
+    catch e
+      helper.log "Error found in your config file: #{e}"
 
     for key, value of defalutConfig
       unless config[key]?

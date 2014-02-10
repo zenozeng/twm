@@ -7,7 +7,7 @@ Extension = ExtensionUtils.getCurrentExtension();
 
 helper = Extension.imports.helper;
 
-defalutConfig = Extension.imports.config["default-config"].config;
+defalutConfig = Extension.imports.config.defaultConfig.config;
 
 onStartup = function() {
   return false;

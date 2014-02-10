@@ -1,8 +1,6 @@
 Main = imports.ui.main
 MessageTray = imports.ui.messageTray
 GLib = imports.gi.GLib
-ExtensionUtils = imports.misc.extensionUtils
-Extension = ExtensionUtils.getCurrentExtension()
 
 log = (text) ->
   unless typeof text is "string"
@@ -18,9 +16,6 @@ spawn = (cmd) -> GLib.spawn_command_line_async(cmd)
 spawnSync = (cmd) ->
   result = GLib.spawn_command_line_sync(cmd)
   if(result[0])
-    result[1].toString()
+     result[1].toString()
   else
-    log(result)
-    false
-
-enable = -> false
+     log(result)

@@ -1,5 +1,6 @@
 ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
+uuid = Extension.uuid
 helper = Extension.imports.helper
 spawn = helper.spawn
 defalutConfig = Extension.imports.config["default-config"].config
@@ -20,7 +21,8 @@ class Config
     else
       @create()
 
-    config = (Function(js + ';return config;'))()
+    inject = "var Extension = imports.misc.extensionUtils.extensions[#{uuid}];"
+    config = (Function(inject + js + ';return config;'))()
 
   ###
   Cp config/defalut.js to ~/.twm/twm.js

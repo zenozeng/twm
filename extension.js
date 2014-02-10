@@ -7,6 +7,8 @@ Extension = ExtensionUtils.getCurrentExtension();
 
 helper = Extension.imports.helper;
 
+global.t1 = Extension;
+
 Window = Extension.imports.api.window.Window;
 
 keybindings = Extension.imports.api.keybindings;

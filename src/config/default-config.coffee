@@ -3,7 +3,11 @@ Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 spawn = helper.spawn
 Window = Extension.imports.api.window.Window
-layouts = Extension.imports.layouts.layouts.layouts
+Layouts = Extension.imports.layouts.layouts.Layouts
+
+layouts = new Layouts
+layouts.set "2-column", Extension.imports.layouts["2-column"].layout
+layouts.set "3-column", Extension.imports.layouts["3-column"].layout
 
 config =
 
@@ -16,7 +20,7 @@ config =
     "<Super>r": -> spawn "gnome-shell --replace" # reload gnome
     "<Super>t": -> false
 
-  layouts: layouts.list()
+  layouts: layouts
 
   onWindowChange: -> false
 

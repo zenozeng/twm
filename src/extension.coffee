@@ -4,6 +4,7 @@ helper = Extension.imports.helper
 Window = Extension.imports.api.window.Window
 keybindings = Extension.imports.api.keybindings
 Config = Extension.imports.config.config.Config
+layouts = Extension.imports.layouts.layouts.layouts
 
 init = ->
 
@@ -22,6 +23,42 @@ init = ->
 
     # fire onStartup Hook
     config.onStartup?()
+
+    applyLayout = ->
+
+      # Get Windows & apply blacklist
+      wins = (new Window()).getAll()
+      wins = wins.filter (win) -> win.wmClass isnt 'Gnome-shell'
+      wins = wins.filter (win) -> config.windowsFilter win
+
+      # remove title bar
+      wins.forEach (win) -> win.setDecorated false
+
+      delay = (time, callback) ->
+        GLib.timeout_add GLib.PRIORITY_DEFAULT, time, ->
+          callback?()
+
+      # a delay to make sure window are already setDecorated(false)
+      delayTime = 100
+
+      delay delayTime, ->
+
+        layout = layouts.get("2-column")
+        areas = layout(wins.length)
+
+        monitor = Main.layoutManager.primaryMonitor
+
+        avaliableWidth = monitor.width
+        avaliableHeight = monitor.height - Main.panel.actor.height
+
+        wins.forEach (win, index) ->
+          {x, y, width, height} = areas[index]
+          x = x * avaliableWidth
+          y = y * avaliableHeight
+          width = width * avaliableWidth
+          height = height * avaliableHeight
+          # helper.log {x: x, y: y, width: width, height: height}
+          win.setArea x, y, width, height
 
     # hook into window events
 

@@ -1,6 +1,3 @@
-ExtensionUtils = imports.misc.extensionUtils
-Extension = ExtensionUtils.getCurrentExtension()
-
 class Layouts
 
   constructor: -> @layouts = {}
@@ -27,7 +24,3 @@ class Layouts
     layouts = []
     layouts.push key for key, value of @layouts
     layouts
-
-layouts = new Layouts
-layouts.set "2-column", Extension.imports.layouts["2-column"].layout
-layouts.set "3-column", Extension.imports.layouts["3-column"].layout

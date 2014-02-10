@@ -11,16 +11,20 @@ Window = Extension.imports.api.window.Window;
 
 keybindings = Extension.imports.api.keybindings;
 
-Config = Extension.imports.config.Config;
+Config = Extension.imports.config.config.Config;
 
 init = function() {
-  var config;
+  var config, e;
+  helper.log("Hey, this is TWM v40");
   global.twm = {
     functions: {}
   };
-  config = new Config;
-  helper.log("Hey, new Version here");
-  return false;
+  try {
+    return config = new Config;
+  } catch (_error) {
+    e = _error;
+    return helper.log(e);
+  }
 };
 
 enable = function() {};

@@ -5,15 +5,24 @@ helper = Extension.imports.helper
 Window = Extension.imports.api.window.Window
 keybindings = Extension.imports.api.keybindings
 
-Config = Extension.imports.config.Config
+Config = Extension.imports.config.config.Config
 
 init = ->
+  helper.log "Hey, this is TWM v40"
+
   # init global variable for functions to call from outside
   global.twm = {functions: {}};
-  # init config
-  config = new Config
-  helper.log "Hey, new Version here"
-  false
+
+  # load config
+  try
+    config = new Config
+
+    # apply keybindings from config
+
+    # hook into window events
+
+  catch e
+    helper.log e
 
 enable = ->
   # do sth here

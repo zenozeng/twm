@@ -2,22 +2,8 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 spawn = helper.spawn
-Window = Extension.imports.api.window.Window
-layouts = Extension.imports.layouts.layouts
-
-defalutConfig =
-
-  keybindings:
-    "<Super>e": -> spawn "emacsclient -c"
-    "<Super>c": -> spawn "google-chrome"
-    "<Super>l": -> Main.lookingGlass.toggle()
-    "<Super>Return": -> spawn "gnome-terminal"
-    "<Super>k": -> (new Window()).current().destroy()
-    "<Super>r": -> init() # reload this extension
-
-  layouts: layouts.list()
-
-  onWindowChange: -> false
+defalutConfig = Extension.imports.config.defalut.config
+fs = Extension.imports.api.fs.fs
 
 class Config
 
@@ -25,10 +11,14 @@ class Config
 
     HOME = helper.spawnSync "sh -c 'echo $HOME'"
     PATH = (HOME + '/.twm').replace('\n', '')
-    helper.log PATH
-    imports.searchPath.push PATH
 
-    config = imports.twm.config
+    if fs.existsSync PATH + '/twm.js'
+      js = fs.readFileSync PATH + '/twm.js'
+    else if fs.existsSync PATH + '/twm.coffee'
+      filename = PATH + '/twm.coffee'
+      js = spawnSync "coffee -p #{filename}"
+    else
+      @create()
 
     helper.log config
 

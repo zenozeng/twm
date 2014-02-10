@@ -76,5 +76,3 @@ layout = (num) ->
     # for index in [2..num]
     #   areas.push {x: 0.5, y: (index - 2) * eachHeight, width: 0.5, height: eachHeight}
     # areas
-
-modules.layouts["3-column"] = layout

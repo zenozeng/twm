@@ -50,8 +50,6 @@ var exec = function(file, callback) {
             // fix window.attachEvent for Coffee Compiler
             var window = {};
             window.attachEvent = function() {};
-            // expose global.twm.modules to modules
-            content = "var modules = global.twm.modules;" + content;
             // do not use (Function(content))() directly
             // or the variables may not be exposed.
             eval("(function() {"+content+"})()");
@@ -62,4 +60,21 @@ var exec = function(file, callback) {
             callback();
         }
     });
+};
+
+var spawn = function(cmd) {
+    GLib.spawn_command_line_async(cmd);
+};
+
+var spawnSync = function(cmd) {
+    try {
+        var result = GLib.spawn_command_line_sync(cmd);
+        if(result[0])
+          return result[1].toString();
+        else
+          log(result);
+          return null
+    } catch(e) {
+        log(e);
+    }
 };

@@ -32,13 +32,6 @@ helper.exec "api/window.coffee", ->
 
     {Window, keybindings, spawn} = modules
 
-    keybindings.add "<Super>e", -> spawn "emacsclient -c"
-    keybindings.add "<Super>c", -> spawn "google-chrome"
-    keybindings.add "<Super>l", -> Main.lookingGlass.toggle()
-    keybindings.add "<Super>Return", -> spawn "gnome-terminal"
-    keybindings.add "<Super>k", -> (new Window()).current().destroy()
-    keybindings.add "<Super>r", -> init() # reload this extension
-
     # for testing
     keybindings.add "<Super>t", ->
       current = (new Window()).current()

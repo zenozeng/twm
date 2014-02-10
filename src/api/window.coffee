@@ -1,8 +1,10 @@
+Main = imports.ui.main
 Meta = imports.gi.Meta
-WindowOverlay = imports.ui.workspace.WindowOverlay
-WM = imports.ui.windowManager
-
-{spawnSync, spawn} = modules
+ExtensionUtils = imports.misc.extensionUtils
+Extension = ExtensionUtils.getCurrentExtension()
+helper = Extension.imports.helper
+spawnSync = helper.spawnSync
+spawn = helper.spawn
 
 class Window
 
@@ -151,6 +153,3 @@ class Window
   @TODO Fix this
   ###
   destroy: ->
-
-
-modules.Window = Window

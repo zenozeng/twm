@@ -4,9 +4,11 @@ A dirty Hack for Keybinding API
 Use dconf-editor for debug
 ###
 
-{helper, spawn} = modules
+ExtensionUtils = imports.misc.extensionUtils
+Extension = ExtensionUtils.getCurrentExtension()
+helper = Extension.imports.helper
+spawn = helper.spawn
 
-keybindings = {}
 commands = {}
 fnIndex = 0;
 
@@ -24,7 +26,7 @@ Add a keybinding
 @param [String] keybinding the keybinding string
 @param [Function] callback the function to be called when keydown
 ###
-keybindings.add = (keybinding, callback) ->
+add = (keybinding, callback) ->
   fnIndex++
   fn = "fn#{fnIndex}"
   global.twm.functions[fn] = ->
@@ -41,7 +43,7 @@ Config are written using gsettings.
 
 @private
 ###
-keybindings.apply = ->
+apply = ->
 
   # object 2 array for conivence
   cmds = []
@@ -61,5 +63,3 @@ keybindings.apply = ->
     spawn "gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:#{customs[i]} command \"#{cmds[i][0]}\""
     spawn "gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:#{customs[i]} name 'twm:#{i}'"
 
-# exposed to moudles
-modules.keybindings = keybindings

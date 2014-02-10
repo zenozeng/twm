@@ -15,7 +15,7 @@ Config = Extension.imports.config.config.Config;
 
 init = function() {
   var config, e;
-  helper.log("Hey, this is TWM v40");
+  helper.log("Hey, this is TWM v41");
   global.twm = {
     functions: {}
   };

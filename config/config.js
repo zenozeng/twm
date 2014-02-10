@@ -17,7 +17,7 @@ fs = Extension.imports.api.fs;
 
 Config = (function() {
   function Config() {
-    var HOME, PATH, config, filename, js;
+    var HOME, PATH, config, filename, js, key, value;
     HOME = helper.spawnSync("sh -c 'echo $HOME'");
     PATH = (HOME + '/.twm').replace('\n', '');
     if (fs.existsSync(PATH + '/twm.js')) {
@@ -29,6 +29,13 @@ Config = (function() {
       this.create();
     }
     config = (Function(js + ';return config;'))();
+    for (key in defalutConfig) {
+      value = defalutConfig[key];
+      if (config[key] == null) {
+        config[key] = value;
+      }
+    }
+    return config;
   }
 
   /*

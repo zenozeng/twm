@@ -13,7 +13,7 @@ config =
     "<Super>l": -> Main.lookingGlass.toggle()
     "<Super>Return": -> spawn "gnome-terminal"
     "<Super>k": -> (new Window()).current().destroy()
-    "<Super>r": -> init() # reload this extension
+    "<Super>r": -> spawn "gnome-shell --replace" # reload gnome
 
   layouts: layouts.list()
 

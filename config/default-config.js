@@ -31,7 +31,7 @@ config = {
       return (new Window()).current().destroy();
     },
     "<Super>r": function() {
-      return init();
+      return spawn("gnome-shell --replace");
     }
   },
   layouts: layouts.list(),

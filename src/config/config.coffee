@@ -23,6 +23,12 @@ class Config
 
     config = (Function(js + ';return config;'))()
 
+    for key, value of defalutConfig
+      unless config[key]?
+        config[key] = value
+
+    return config
+
   ###
   Cp config/defalut.js to ~/.twm/twm.js
 

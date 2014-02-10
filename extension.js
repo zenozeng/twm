@@ -14,15 +14,21 @@ keybindings = Extension.imports.api.keybindings;
 Config = Extension.imports.config.config.Config;
 
 init = function() {
-  var config, e;
-  helper.log("Hey, this is TWM v42");
+  var callback, config, e, keybinding, _ref;
   global.twm = {
     functions: {}
   };
   try {
     config = new Config;
+    _ref = config.keybindings;
+    for (keybinding in _ref) {
+      callback = _ref[keybinding];
+      keybindings.add(keybinding, callback);
+    }
+    keybindings.apply();
   } catch (_error) {
     e = _error;
+    global.log(e);
     helper.log(e);
   }
   return false;

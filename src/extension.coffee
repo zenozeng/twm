@@ -6,21 +6,24 @@ keybindings = Extension.imports.api.keybindings
 Config = Extension.imports.config.config.Config
 
 init = ->
-  helper.log "Hey, this is TWM v42"
 
   # init global variable for functions to call from outside
   global.twm = {functions: {}};
 
-  # load config
   try
 
+    # load config
     config = new Config
 
     # apply keybindings from config
+    for keybinding, callback of config.keybindings
+      keybindings.add keybinding, callback
+    keybindings.apply()
 
     # hook into window events
 
   catch e
+    global.log e
     helper.log e
 
   # init() must return false, or enable will nerver be called
@@ -29,7 +32,6 @@ init = ->
   # if (extensionModule.init) {
   #     extensionState = extensionModule.init(extension);
   # }
-
   # if (!extensionState)
   #     extensionState = extensionModule;
   # extension.stateObj = extensionState;

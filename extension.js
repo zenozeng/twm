@@ -26,6 +26,9 @@ init = function() {
       keybindings.add(keybinding, callback);
     }
     keybindings.apply();
+    if (typeof config.onStartup === "function") {
+      config.onStartup();
+    }
   } catch (_error) {
     e = _error;
     global.log(e);

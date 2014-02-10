@@ -7,5 +7,10 @@ onStartup = -> false
 
 # helper.log "This is in config file!"
 
+# Example: Ignore all gimp windows
+myWindowsFilter = (win) -> win.wmClass.indexOf 'gimp' is -1
+
+
 # expose to config
-config = {}
+config =
+  windowsFilter: myWindowsFilter

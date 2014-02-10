@@ -14,7 +14,10 @@ config =
     "<Super>Return": -> spawn "gnome-terminal"
     "<Super>k": -> (new Window()).current().destroy()
     "<Super>r": -> spawn "gnome-shell --replace" # reload gnome
+    "<Super>t": -> false
 
   layouts: layouts.list()
 
   onWindowChange: -> false
+
+  windowsFilter: (win) -> true

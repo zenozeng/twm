@@ -20,7 +20,7 @@ init = ->
       keybindings.add keybinding, callback
     keybindings.apply()
 
-    # fire onStartup
+    # fire onStartup Hook
     config.onStartup?()
 
     # hook into window events
@@ -29,9 +29,9 @@ init = ->
     global.log e
     helper.log e
 
-  # init() must return false, or enable will nerver be called
-  # in gnome-shell/js/ui/extensionSystem.js function initExtension
+  # `init()` must return false, or enable will nerver be called
   #
+  # In gnome-shell/js/ui/extensionSystem.js function initExtension:
   # if (extensionModule.init) {
   #     extensionState = extensionModule.init(extension);
   # }

@@ -32,10 +32,16 @@ config = {
     },
     "<Super>r": function() {
       return spawn("gnome-shell --replace");
+    },
+    "<Super>t": function() {
+      return false;
     }
   },
   layouts: layouts.list(),
   onWindowChange: function() {
     return false;
+  },
+  windowsFilter: function(win) {
+    return true;
   }
 };

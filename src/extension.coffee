@@ -8,7 +8,7 @@ Config = Extension.imports.config.config.Config
 init = ->
 
   # init global variable for functions to call from outside
-  global.twm = {functions: {}};
+  global.twm = {functions: {}}
 
   try
 
@@ -19,6 +19,9 @@ init = ->
     for keybinding, callback of config.keybindings
       keybindings.add keybinding, callback
     keybindings.apply()
+
+    # fire onStartup
+    config.onStartup?()
 
     # hook into window events
 

@@ -69,7 +69,7 @@ Window = (function() {
   };
 
   /*
-  Set the position and size of the window
+  Set the position and size of the visiable part of window
   
   @param [Number] x position x (px)
   @param [Number] y position y (px)
@@ -80,10 +80,23 @@ Window = (function() {
 
 
   Window.prototype.setArea = function(x, y, width, height) {
+    var fix,
+      _this = this;
+    helper.log([this.wmClass, x, y, width, height]);
     y += Main.panel.actor.height;
     this.metaWindow.unmaximize(Meta.MaximizeFlags.VERTICAL | Meta.MaximizeFlags.HORIZONTAL);
     this.metaWindow.move_resize_frame(true, x, y, width, height);
-    return this;
+    fix = function() {
+      var heightFix, heightOffset, widthFix, widthOffset;
+      widthOffset = width - _this.actor.get_width();
+      widthFix = width + widthOffset;
+      heightOffset = height - _this.actor.get_height();
+      heightFix = height + heightOffset;
+      helper.log([_this.wmClass, widthFix, heightFix]);
+      return _this.metaWindow.move_resize_frame(true, x, y, widthFix, heightFix);
+    };
+    helper.delay(100, fix);
+    return helper.delay(200, fix);
   };
 
   /*

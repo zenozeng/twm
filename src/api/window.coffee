@@ -45,7 +45,7 @@ class Window
     windows.map (actor) -> new Window(actor)
 
   ###
-  Set the position and size of the window
+  Set the position and size of the visiable part of window
 
   @param [Number] x position x (px)
   @param [Number] y position y (px)
@@ -54,10 +54,21 @@ class Window
   @note (0, 0) was at the left-bottom of the top bar
   ###
   setArea: (x, y, width, height) ->
+    helper.log [@wmClass, x, y, width, height]
     y += Main.panel.actor.height
     @metaWindow.unmaximize(Meta.MaximizeFlags.VERTICAL | Meta.MaximizeFlags.HORIZONTAL)
     @metaWindow.move_resize_frame true, x, y, width, height
-    this
+    # do its best convince the width and height of visiable part
+    fix = =>
+      widthOffset = width - @actor.get_width()
+      widthFix = width + widthOffset
+      heightOffset = height - @actor.get_height()
+      heightFix = height + heightOffset
+      helper.log [@wmClass, widthFix, heightFix]
+      @metaWindow.move_resize_frame true, x, y, widthFix, heightFix
+    # twice
+    helper.delay 100, fix
+    helper.delay 200, fix
 
   ###
   Activate window

@@ -19,3 +19,6 @@ spawnSync = (cmd) ->
      result[1].toString()
   else
      log(result)
+
+delay = (time, callback) ->
+  GLib.timeout_add GLib.PRIORITY_DEFAULT, time, -> callback?()

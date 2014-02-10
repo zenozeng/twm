@@ -21,7 +21,6 @@ class Window
     if @actor?
       @metaWindow = @actor.get_meta_window()
       @wmClass = @metaWindow.get_wm_class()
-    this
 
   ###
   Get current window

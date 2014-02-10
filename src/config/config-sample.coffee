@@ -16,6 +16,4 @@ helper.log "helper!"
 config =
   onStartup: onStartup
   layouts: myLayouts
-  keybindings: keybindings
-
-modules.config = config
+  keybindings: myKeybindings

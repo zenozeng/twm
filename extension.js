@@ -15,7 +15,7 @@ Config = Extension.imports.config.config.Config;
 
 init = function() {
   var config, e;
-  helper.log("Hey, this is TWM v41");
+  helper.log("Hey, this is TWM v42");
   global.twm = {
     functions: {}
   };
@@ -27,7 +27,9 @@ init = function() {
   }
 };
 
-enable = function() {};
+enable = function() {
+  return helper.log("hey");
+};
 
 disable = function() {
   return false;

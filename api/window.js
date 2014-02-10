@@ -32,7 +32,6 @@ Window = (function() {
       this.metaWindow = this.actor.get_meta_window();
       this.wmClass = this.metaWindow.get_wm_class();
     }
-    this;
   }
 
   /*

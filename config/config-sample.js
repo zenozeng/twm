@@ -20,7 +20,5 @@ helper.log("helper!");
 config = {
   onStartup: onStartup,
   layouts: myLayouts,
-  keybindings: keybindings
+  keybindings: myKeybindings
 };
-
-modules.config = config;

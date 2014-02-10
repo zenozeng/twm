@@ -8,7 +8,7 @@ keybindings = Extension.imports.api.keybindings
 Config = Extension.imports.config.config.Config
 
 init = ->
-  helper.log "Hey, this is TWM v41"
+  helper.log "Hey, this is TWM v42"
 
   # init global variable for functions to call from outside
   global.twm = {functions: {}};
@@ -25,8 +25,7 @@ init = ->
     helper.log e
 
 enable = ->
-  # do sth here
-  # bind events here
+  helper.log "hey"
 
 disable = -> false
   # disconnect

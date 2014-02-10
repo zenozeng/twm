@@ -27,6 +27,6 @@ Test whether file exists
 
 existsSync = function(path) {
   var exists, result;
-  result = spawnSync("[ -f " + path + " ] && echo 'Found' || echo 'Not found'");
-  return exists = result === 'Found';
+  result = spawnSync("sh -c \"[ -f " + path + " ] && echo 'Found' || echo 'Not found'\"");
+  return exists = result.replace('\n', '') === 'Found';
 };

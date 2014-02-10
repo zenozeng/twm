@@ -14,22 +14,13 @@ class Config
 
     if fs.existsSync PATH + '/twm.js'
       js = fs.readFileSync PATH + '/twm.js'
-      helper.log "p1"
-      helper.log js
     else if fs.existsSync PATH + '/twm.coffee'
       filename = PATH + '/twm.coffee'
       js = spawnSync "coffee -p #{filename}"
     else
       @create()
 
-    js = "(function() {
-      #{js}
-      ;return config;})()"
-
-    helper.log js
-
-    config = (Function(js))()
-    helper.log config
+    config = (Function(js + ';return config;'))()
 
   ###
   Cp config/defalut.js to ~/.twm/twm.js

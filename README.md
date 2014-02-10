@@ -31,6 +31,10 @@ GPL v3
 
 LookingGlass 的调试结果有下划线的是可点击的，是可以查看明细的。左边的取色状工具可以取得窗口的具体信息。
 
+#### Log Everything
+
+`nohup gnome-shell --replace > log &`
+
 ### Hide title bar
 
 - http://askubuntu.com/questions/131159/hide-window-title-in-gnome-shell-using-mutter-gdk-wnck-or-gtk

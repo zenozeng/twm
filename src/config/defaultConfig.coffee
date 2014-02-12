@@ -16,7 +16,7 @@ config =
     "<Super>c": -> spawn "google-chrome"
     "<Super>l": -> Main.lookingGlass.toggle()
     "<Super>Return": -> spawn "gnome-terminal"
-    "<Super>k": -> (new Window()).current().destroy()
+    "<Super>k": -> (new Window()).current().close()
     "<Super>r": -> spawn "gnome-shell --replace" # reload gnome
     "<Super>t": -> false
 

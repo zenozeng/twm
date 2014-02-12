@@ -5,6 +5,7 @@ Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 spawnSync = helper.spawnSync
 spawn = helper.spawn
+WindowOverlay = imports.ui.workspace.WindowOverlay
 
 class Window
 
@@ -21,6 +22,13 @@ class Window
     if @actor?
       @metaWindow = @actor.get_meta_window()
       @wmClass = @metaWindow.get_wm_class()
+
+  ###
+  Get Overlay Object of current Window
+  in js/ui/workspace.js
+  this._windowOverlays of const Workspace
+  ###
+  getWindowOverlay: -> false
 
   ###
   Get current window
@@ -57,18 +65,21 @@ class Window
     helper.log [@wmClass, x, y, width, height]
     y += Main.panel.actor.height
     @metaWindow.unmaximize(Meta.MaximizeFlags.VERTICAL | Meta.MaximizeFlags.HORIZONTAL)
-    @metaWindow.move_resize_frame true, x, y, width, height
-    # do its best convince the width and height of visiable part
-    fix = =>
-      widthOffset = width - @actor.get_width()
-      widthFix = width + widthOffset
-      heightOffset = height - @actor.get_height()
-      heightFix = height + heightOffset
-      helper.log [@wmClass, widthFix, heightFix]
-      @metaWindow.move_resize_frame true, x, y, widthFix, heightFix
-    # twice
-    helper.delay 100, fix
-    helper.delay 200, fix
+    @actor.set_position x, y
+    # WindowOverlay._animateOverlayActor @actor, x, y, width, height
+    # @metaWindow.move_resize_frame true, x, y, width, height
+    # # do its best convince the width and height of visiable part
+    # fix = =>
+    #   widthOffset = width - @actor.get_width()
+    #   widthFix = width + widthOffset
+    #   heightOffset = height - @actor.get_height()
+    #   heightFix = height + heightOffset
+    #   helper.log [@wmClass, widthFix, heightFix]
+    #   @metaWindow.move_resize_frame true, x, y, widthFix, heightFix
+    # # twice
+    # helper.delay 100, fix
+    # helper.delay 200, fix
+    # helper.delay 300, fix
 
   ###
   Activate window
@@ -89,6 +100,14 @@ class Window
     xids = spawnSync "xwininfo -children -id 0x#{xid}"
     regExp = new RegExp('0x[0-9a-f]{3,}', 'g')
     xid = xids.match(regExp)[1]
+
+  ###
+  Get PID of window actor
+
+  @TODO remove this api unless needed
+  @see http://stackoverflow.com/questions/5541884/how-to-get-xid-from-pid-and-vice-versa
+  ###
+  getPid: -> "xprop -id <windowid> _NET_WM_PID"
 
   ###
   Control whether window should be decorated with a title bar, resize controls, etc.
@@ -158,8 +177,8 @@ class Window
     #   toActivate.activate_with_focus window, global.get_current_time()
 
   ###
-  Destory window
+  Close window
 
   @TODO Fix this
   ###
-  destroy: ->
+  close: -> false

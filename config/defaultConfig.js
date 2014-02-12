@@ -34,7 +34,7 @@ config = {
       return spawn("gnome-terminal");
     },
     "<Super>k": function() {
-      return (new Window()).current().destroy();
+      return (new Window()).current().close();
     },
     "<Super>r": function() {
       return spawn("gnome-shell --replace");

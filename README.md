@@ -25,6 +25,21 @@ Coffee Script is supported by default, CoffeeScript Compiler v1.7.1 was included
 
 GPL v3
 
+## Gnome-shell 源代码阅读笔记
+
+如有错误之处，还望指正。
+
+### Lang.Class
+
+GJS 里头写 Class 的方式，此时 this 的行为和js默认不一样，而是按照正常的预期样子。
+
+### workspace
+
+overview -> workspaceThumbnail -> workspaceView -> workspace
+
+最终 workspace 里的 _closeWindow 指的是删除 clone 的 Actor
+应该注意的是 _onWindowAdded 的行为
+
 ## Ref
 
 ### Hint

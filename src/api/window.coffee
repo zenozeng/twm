@@ -6,6 +6,8 @@ helper = Extension.imports.helper
 spawnSync = helper.spawnSync
 spawn = helper.spawn
 WindowOverlay = imports.ui.workspace.WindowOverlay
+shellwm = global.window_manager
+wm = imports.ui.main.wm
 
 class Window
 
@@ -60,26 +62,29 @@ class Window
   @param [Number] width width (px) (border & shadow should not be included)
   @param [Number] height height (px) (border & shadow should not be included)
   @note (0, 0) was at the left-bottom of the top bar
+  @see https://bugzilla.gnome.org/show_bug.cgi?id=651899
   ###
   setArea: (x, y, width, height) ->
-    helper.log [@wmClass, x, y, width, height]
     y += Main.panel.actor.height
     @metaWindow.unmaximize(Meta.MaximizeFlags.VERTICAL | Meta.MaximizeFlags.HORIZONTAL)
-    @actor.set_position x, y
-    # WindowOverlay._animateOverlayActor @actor, x, y, width, height
+
+    user_op = false
+    clientRect = @metaWindow.get_rect()
+    outerRect = @metaWindow.get_outer_rect()
+    @metaWindow.resize user_op, (width + outerRect.width - clientRect.width), (height + outerRect.height - clientRect.height)
+    @metaWindow.move_frame(user_op, x, y)
+
     # @metaWindow.move_resize_frame true, x, y, width, height
     # # do its best convince the width and height of visiable part
     # fix = =>
     #   widthOffset = width - @actor.get_width()
-    #   widthFix = width + widthOffset
+    #   helper.log widthOffset
+    #   widthFix = width + widthOffset / 2
     #   heightOffset = height - @actor.get_height()
-    #   heightFix = height + heightOffset
-    #   helper.log [@wmClass, widthFix, heightFix]
+    #   heightFix = height + heightOffset / 2
     #   @metaWindow.move_resize_frame true, x, y, widthFix, heightFix
     # # twice
-    # helper.delay 100, fix
-    # helper.delay 200, fix
-    # helper.delay 300, fix
+    # helper.delay 1000, fix
 
   ###
   Activate window
@@ -179,6 +184,9 @@ class Window
   ###
   Close window
 
-  @TODO Fix this
+  @see js/ui/windowManager.js function:_destoryWindow
   ###
-  close: -> false
+  close: ->
+    helper.log "np1"
+    wm._destroyWindow shellwm, @actor
+    helper.log "np2"

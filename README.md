@@ -27,7 +27,7 @@ GPL v3
 
 ## Gnome-shell 源代码阅读笔记
 
-如有错误之处，还望指正。
+这是我一些肤浅的阅读笔记。如有错误之处，还望指正。
 
 ### Lang.Class
 
@@ -39,6 +39,46 @@ overview -> workspaceThumbnail -> workspaceView -> workspace
 
 最终 workspace 里的 _closeWindow 指的是删除 clone 的 Actor
 应该注意的是 _onWindowAdded 的行为
+
+### Keybinding
+
+windowManager.js 里头有个 `setCustomKeybindingHandler`
+指向了 `Meta.keybindings_set_custom_handler(name, handler)`
+
+这一部分应该是C写的，然后封装成 gi 对象来操作的样子，
+这里有文档：
+https://developer.gnome.org/meta/unstable/meta-MetaKeybinding.html
+然后源代码在 mutter/src/core/keybindings.c
+
+几个函数值得注意一下：
+
+- `meta_display_add_keybinding`
+- `meta_display_remove_keybinding`
+- `meta_display_get_keybinding_action`
+
+注意一点，Meta.display 在 Gnome Shell 中是 bind 到了 global.display 中的，
+所以 GJS 中相应的函数名为 `global.display.get_keybinding_action`
+
+在 C 源代码里可以读到：
+```
+  if (binding)
+    {
+      MetaKeyGrab *grab = g_hash_table_lookup (external_grabs, binding->name);
+      if (grab)
+        return grab->action;
+      else
+        return (guint) meta_prefs_get_keybinding_action (binding->name);
+    }
+  else
+    {
+      return META_KEYBINDING_ACTION_NONE;
+    }
+```
+
+`meta_prefs_get_keybinding_action` 对应 GJS 里头的 `Meta.prefs_get_keybinding_action`
+
+比如 `Meta.prefs_get_keybinding_action('maximize')` 就会读取绑在 `<Super>+Up` 上的 action，
+返回的是个 guint。
 
 ## Ref
 

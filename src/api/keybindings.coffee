@@ -33,7 +33,7 @@ add = (keybinding, callback) ->
     try
       callback?()
     catch e
-      helper.log e
+      helper.log e.toString()
   cmd = "gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval 'global.twm.functions[\\\"#{fn}\\\"]()'"
   commands[keybinding] = cmd
 

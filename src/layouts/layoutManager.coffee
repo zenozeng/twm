@@ -1,4 +1,9 @@
 Main = imports.ui.main
+Wnck = imports.gi.Wnck
+ExtensionUtils = imports.misc.extensionUtils
+Extension = ExtensionUtils.getCurrentExtension()
+helper = Extension.imports.helper
+{spawnSync} = helper
 
 class LayoutManager
 
@@ -29,11 +34,32 @@ class LayoutManager
 
   ###
   Apply Layout
+
+  @param [String] layoutName Layout Name
+  @param [Function] filter Filter function which takes WnckWindow as param and returns false this window should be ignored
   ###
-  apply: (layoutName, windows) ->
+  apply: (layoutName, filter) ->
+
+    global.log layoutName
+
+    screen = Wnck.Screen.get_default()
+    windows = screen.get_windows()
+    currentWorkspace = screen.get_active_workspace()
+
+    windows = windows.filter (wnckWindow) ->
+      # This will also checks if window is not minimized or shaded
+      wnckWindow.is_visible_on_workspace(currentWorkspace)
+
+    windows = windows.filter filter if filter?
 
     # remove title bar
-    windows.forEach (win) -> win.setDecorated false
+    # @see http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html
+    windows.forEach (wnckWindow) ->
+      xid = wnckWindow.get_xid()
+      hints = "0x2, 0x0, 0x0, 0x0, 0x0"
+      spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "' + hints + '"'
+
+    # set layout
 
     monitor = Main.layoutManager.primaryMonitor
     avaliableWidth = monitor.width
@@ -42,15 +68,31 @@ class LayoutManager
     layout = @get layoutName
     areas = layout windows.length
 
+    setGeometry = (wnckWindow, geometry) ->
+      global.log geometry
+      wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
+      geometry = geometry.map (elem) -> parseInt elem
+      [x, y, width, height] = geometry
+      wnckWindow.set_geometry 0, 15, x, y, width, height
+
     windows.forEach (win, index) ->
       {x, y, width, height} = areas[index]
       x = x * avaliableWidth
       y = y * avaliableHeight
       width = width * avaliableWidth
       height = height * avaliableHeight
-      # helper.log {x: x, y: y, width: width, height: height}
-      win.setArea x, y, width, height
 
+      target = [x, y, width, height]
+      setGeometry win, target
+
+      # fix
+      # actual = win.get_client_window_geometry()
+      # helper.log ["actual", actual]
+      # newTarget = [0, 0, 0, 0]
+      # newTarget = newTarget.map (elem, index) ->
+      #   offset = parseInt(target[index]) - parseInt(actual[index])
+      #   offset + target
+      # setGeometry win, newTarget
 
   ###
   List all avaliable layouts, returns an array like ["2-column", "3-column"]

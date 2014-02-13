@@ -20,3 +20,5 @@ Main.shellDBusService.Eval
 /js/ui/shellDBus.js
 
 `gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/ScreenSaver --method org.gnome.ScreenSaver.Lock`
+
+`xdg-screensaver lock`

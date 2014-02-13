@@ -40,7 +40,7 @@ config = {
       return spawn("gnome-shell --replace");
     },
     "<Super>t": function() {
-      return false;
+      return layouts.apply("2-column");
     }
   },
   layouts: layouts,

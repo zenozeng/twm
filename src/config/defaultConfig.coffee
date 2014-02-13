@@ -18,7 +18,7 @@ config =
     "<Super>Return": -> spawn "gnome-terminal"
     "<Super>k": -> (new Window()).current().close()
     "<Super>r": -> spawn "gnome-shell --replace" # reload gnome
-    "<Super>t": -> false
+    "<Super>t": -> layouts.apply "2-column"
 
   layouts: layouts
 

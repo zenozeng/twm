@@ -8,6 +8,16 @@ Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.
 顺便吐个槽：Gnome Shell 的文档非常少，很多 API 都找不到，不得不去读 Gnome Shell 的一些js源代码。
 经常没找到方便的API，甚至有时候不得不用 unstable 的私有API。
 
+## 换用 libwnck
+
+比起直接用 Window Actor 大概有以下好处：
+
+- API 文档更全
+
+- API 稳定
+
+- 靠谱的获取 XID 方式: `wnckWindow.get_xid()`
+
 ## Doc
 
 I am using Coffee Script & using [codo](https://github.com/coffeedoc/codo) as documentation generator.

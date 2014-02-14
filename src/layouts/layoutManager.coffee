@@ -3,6 +3,9 @@ Wnck = imports.gi.Wnck
 ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
+GdkX11 = imports.gi.GdkX11
+Gdk = imports.gi.Gdk
+
 {spawnSync} = helper
 
 class LayoutManager
@@ -52,11 +55,17 @@ class LayoutManager
 
     windows = windows.filter filter if filter?
 
+    global.xwins = []
+
     # remove title bar
     # @see http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html
     windows.forEach (wnckWindow) ->
       xid = wnckWindow.get_xid()
       spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"'
+
+      Gdk.Window.process_all_updates() # or some window will crash
+      xwin = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), xid)
+      global.xwins.push xwin
 
     # set layout
 

@@ -8,6 +8,64 @@ Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.
 顺便吐个槽：Gnome Shell 的文档非常少，很多 API 都找不到，不得不去读 Gnome Shell 的一些js源代码。
 经常没找到方便的API，甚至有时候不得不用 unstable 的私有API。
 
+## Meta Window API
+
+源代码：
+
+in `https://github.com/GNOME/mutter`
+
+see `src/meta/window.h`, `src/core/window.c`
+
+文档：
+
+https://developer.gnome.org/meta/unstable/MetaWindow.html
+
+奇怪的是，当 focus 在当前 window 时， `meta_window_move_resize_frame` 就无效了。
+像 Emacs 这种以 usehint 作为尺寸单位的，一般难以用 px 作为单位来调整，比如原先给了 683px 刚好排不下一个字符的宽度，于是就少了10多px，给684px，刚好多一个字符，多了10多px。Gnome Shell 半屏最大化的时候是给两边这接注入空白，类似padding的感觉来实现使之宽度稳定在一个确定的尺寸上的。
+
+[14.1.7 Setting and Reading the WM_NORMAL_HINTS Property](http://tronche.com/gui/x/xlib/ICC/client-to-window-manager/wm-normal-hints.html)
+
+这是我的 Emacs，用 xprop 读到的。
+
+```
+WM_NORMAL_HINTS(WM_SIZE_HINTS):
+		program specified minimum size: 36 by 38
+		program specified resize increment: 9 by 19
+		program specified base size: 27 by 19
+		window gravity: NorthWest
+```
+
+这是我的 Chrome，
+
+```
+WM_NORMAL_HINTS(WM_SIZE_HINTS):
+		program specified minimum size: 387 by 90
+		window gravity: NorthWest
+```
+
+扩号里头应该是类型。
+
+
+用 `xprop -f WM_SIZE_HINTS 32i` 可以读到
+`WM_NORMAL_HINTS(WM_SIZE_HINTS) = 848, 0, 0, 1, 0, 36, 38, 12691600, 0, 9, 19, 12874720, 0, 33206688, 0, 27, 19, 1`，
+猜测为上下界，参数（可能）见下
+
+```
+#define USPosition	(1L << 0)	/* user specified x, y */
+#define USSize		(1L << 1)	/* user specified width, height */
+#define PPosition	(1L << 2)	/* program specified position */
+#define PSize		(1L << 3)	/* program specified size */
+#define PMinSize	(1L << 4)	/* program specified minimum size */
+#define PMaxSize	(1L << 5)	/* program specified maximum size */
+#define PResizeInc	(1L << 6)	/* program specified resize increments */
+#define PAspect		(1L << 7)	/* program specified min and max aspect ratios */
+#define PBaseSize	(1L << 8)
+#define PWinGravity	(1L << 9)
+#define PAllHints	(PPosition|PSize|PMinSize|PMaxSize|PResizeInc|PAspect)
+```
+
+其中第10和第11为 program specified resize increment。
+
 ## 换用 libwnck
 
 比起直接用 Window Actor 大概有以下好处：

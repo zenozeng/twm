@@ -63,9 +63,14 @@ class LayoutManager
       xid = wnckWindow.get_xid()
       spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"'
 
-      Gdk.Window.process_all_updates() # or some window will crash
-      xwin = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), xid)
-      global.xwins.push xwin
+    # set geometry hints
+    # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
+    # allow setting width & height using px (for Gnome Termianl, Emacs)
+    gdkScreen = Gdk.Screen.get_default()
+    gdkWindows = gdkScreen.get_window_stack()
+    gdkWindows.forEach (gdkWindow) ->
+      geometry = new Gdk.Geometry({})
+      gdkWindow.set_geometry_hints(geometry, 1 << 5)
 
     # set layout
 

@@ -65,7 +65,7 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.apply = function(layoutName, filter) {
-    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, screen, setGeometry, windows;
+    var areas, avaliableHeight, avaliableWidth, currentWorkspace, gdkScreen, gdkWindows, layout, monitor, screen, setGeometry, windows;
     global.log(layoutName);
     screen = Wnck.Screen.get_default();
     windows = screen.get_windows();
@@ -78,12 +78,16 @@ LayoutManager = (function() {
     }
     global.xwins = [];
     windows.forEach(function(wnckWindow) {
-      var xid, xwin;
+      var xid;
       xid = wnckWindow.get_xid();
-      spawnSync('xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"');
-      Gdk.Window.process_all_updates();
-      xwin = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), xid);
-      return global.xwins.push(xwin);
+      return spawnSync('xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"');
+    });
+    gdkScreen = Gdk.Screen.get_default();
+    gdkWindows = gdkScreen.get_window_stack();
+    gdkWindows.forEach(function(gdkWindow) {
+      var geometry;
+      geometry = new Gdk.Geometry({});
+      return gdkWindow.set_geometry_hints(geometry, 1 << 5);
     });
     monitor = Main.layoutManager.primaryMonitor;
     avaliableWidth = monitor.width;

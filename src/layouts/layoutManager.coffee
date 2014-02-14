@@ -43,8 +43,6 @@ class LayoutManager
   ###
   apply: (layoutName, filter) ->
 
-    global.log layoutName
-
     screen = Wnck.Screen.get_default()
     windows = screen.get_windows()
     currentWorkspace = screen.get_active_workspace()
@@ -54,8 +52,6 @@ class LayoutManager
       wnckWindow.is_visible_on_workspace(currentWorkspace)
 
     windows = windows.filter filter if filter?
-
-    global.xwins = []
 
     # remove title bar
     # @see http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html
@@ -73,7 +69,6 @@ class LayoutManager
       gdkWindow.set_geometry_hints(geometry, 1 << 5)
 
     # set layout
-
     monitor = Main.layoutManager.primaryMonitor
     avaliableWidth = monitor.width
     avaliableHeight = monitor.height - Main.panel.actor.height
@@ -82,7 +77,6 @@ class LayoutManager
     areas = layout windows.length
 
     setGeometry = (wnckWindow, geometry) ->
-      global.log geometry
       wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
       geometry = geometry.map (elem) -> Math.round elem
       [x, y, width, height] = geometry
@@ -97,22 +91,13 @@ class LayoutManager
 
       clientWindowGeometry = win.get_client_window_geometry()
       windowGeometry = win.get_geometry()
-
+      widthOffset = windowGeometry[2] - clientWindowGeometry[2]
       heightOffset = windowGeometry[3] - clientWindowGeometry[3]
 
       y -= 3 # border-radius of panel
 
-      target = [x, y, width, height + heightOffset]
+      target = [x, y, width + widthOffset, height + heightOffset]
       setGeometry win, target
-
-      # fix
-      # actual = win.get_client_window_geometry()
-      # helper.log ["actual", actual]
-      # newTarget = [0, 0, 0, 0]
-      # newTarget = newTarget.map (elem, index) ->
-      #   offset = parseInt(target[index]) - parseInt(actual[index])
-      #   offset + target
-      # setGeometry win, newTarget
 
   ###
   List all avaliable layouts, returns an array like ["2-column", "3-column"]

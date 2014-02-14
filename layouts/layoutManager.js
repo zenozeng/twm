@@ -66,7 +66,6 @@ LayoutManager = (function() {
 
   LayoutManager.prototype.apply = function(layoutName, filter) {
     var areas, avaliableHeight, avaliableWidth, currentWorkspace, gdkScreen, gdkWindows, layout, monitor, screen, setGeometry, windows;
-    global.log(layoutName);
     screen = Wnck.Screen.get_default();
     windows = screen.get_windows();
     currentWorkspace = screen.get_active_workspace();
@@ -76,7 +75,6 @@ LayoutManager = (function() {
     if (filter != null) {
       windows = windows.filter(filter);
     }
-    global.xwins = [];
     windows.forEach(function(wnckWindow) {
       var xid;
       xid = wnckWindow.get_xid();
@@ -96,16 +94,15 @@ LayoutManager = (function() {
     areas = layout(windows.length);
     setGeometry = function(wnckWindow, geometry) {
       var height, width, x, y;
-      global.log(geometry);
       wnckWindow.unmaximize();
       geometry = geometry.map(function(elem) {
-        return parseInt(elem);
+        return Math.round(elem);
       });
       x = geometry[0], y = geometry[1], width = geometry[2], height = geometry[3];
       return wnckWindow.set_geometry(0, 15, x, y, width, height);
     };
     return windows.forEach(function(win, index) {
-      var clientWindowGeometry, height, heightOffset, target, width, windowGeometry, x, y, _ref;
+      var clientWindowGeometry, height, heightOffset, target, width, widthOffset, windowGeometry, x, y, _ref;
       _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
       x = x * avaliableWidth;
       y = y * avaliableHeight;
@@ -113,10 +110,10 @@ LayoutManager = (function() {
       height = height * avaliableHeight;
       clientWindowGeometry = win.get_client_window_geometry();
       windowGeometry = win.get_geometry();
+      widthOffset = windowGeometry[2] - clientWindowGeometry[2];
       heightOffset = windowGeometry[3] - clientWindowGeometry[3];
       y -= 3;
-      height += 3;
-      target = [x, y, width, height + heightOffset];
+      target = [x, y, width + widthOffset, height + heightOffset];
       return setGeometry(win, target);
     });
   };

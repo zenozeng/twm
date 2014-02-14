@@ -2,7 +2,7 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 uuid = Extension.uuid
 helper = Extension.imports.helper
-spawn = helper.spawn
+{spawn, spawnSync} = helper
 defalutConfig = Extension.imports.config.defaultConfig.config
 fs = Extension.imports.api.fs
 
@@ -17,7 +17,7 @@ class Config
       js = fs.readFileSync PATH + '/twm.js'
     else if fs.existsSync PATH + '/twm.coffee'
       filename = PATH + '/twm.coffee'
-      js = spawnSync "coffee -p #{filename}"
+      js = spawnSync "coffee -bp #{filename}"
     else
       @create()
 

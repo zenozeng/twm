@@ -73,10 +73,9 @@ LayoutManager = (function() {
       windows = windows.filter(filter);
     }
     windows.forEach(function(wnckWindow) {
-      var hints, xid;
+      var xid;
       xid = wnckWindow.get_xid();
-      hints = "0x2, 0x0, 0x0, 0x0, 0x0";
-      return spawnSync('xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "' + hints + '"');
+      return spawnSync('xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"');
     });
     monitor = Main.layoutManager.primaryMonitor;
     avaliableWidth = monitor.width;
@@ -91,17 +90,21 @@ LayoutManager = (function() {
         return parseInt(elem);
       });
       x = geometry[0], y = geometry[1], width = geometry[2], height = geometry[3];
-      height += 30;
       return wnckWindow.set_geometry(0, 15, x, y, width, height);
     };
     return windows.forEach(function(win, index) {
-      var height, target, width, x, y, _ref;
+      var clientWindowGeometry, height, heightOffset, target, width, windowGeometry, x, y, _ref;
       _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
       x = x * avaliableWidth;
       y = y * avaliableHeight;
       width = width * avaliableWidth;
       height = height * avaliableHeight;
-      target = [x, y, width, height];
+      clientWindowGeometry = win.get_client_window_geometry();
+      windowGeometry = win.get_geometry();
+      heightOffset = windowGeometry[3] - clientWindowGeometry[3];
+      y -= 3;
+      height += 3;
+      target = [x, y, width, height + heightOffset];
       return setGeometry(win, target);
     });
   };

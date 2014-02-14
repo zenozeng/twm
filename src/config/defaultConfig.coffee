@@ -2,7 +2,6 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 spawn = helper.spawn
-Window = Extension.imports.api.window.Window
 LayoutManager = Extension.imports.layouts.layoutManager.LayoutManager
 
 layouts = new LayoutManager
@@ -16,7 +15,6 @@ config =
     "<Super>c": -> spawn "google-chrome"
     "<Super>l": -> Main.lookingGlass.toggle()
     "<Super>Return": -> spawn "gnome-terminal"
-    "<Super>k": -> (new Window()).current().close()
     "<Super>r": -> spawn "gnome-shell --replace" # reload gnome
     "<Super>t": -> layouts.apply "2-column"
 

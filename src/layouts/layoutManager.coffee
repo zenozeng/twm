@@ -56,8 +56,7 @@ class LayoutManager
     # @see http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html
     windows.forEach (wnckWindow) ->
       xid = wnckWindow.get_xid()
-      hints = "0x2, 0x0, 0x0, 0x0, 0x0"
-      spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "' + hints + '"'
+      spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"'
 
     # set layout
 
@@ -82,7 +81,21 @@ class LayoutManager
       width = width * avaliableWidth
       height = height * avaliableHeight
 
-      target = [x, y, width, height]
+      clientWindowGeometry = win.get_client_window_geometry()
+      windowGeometry = win.get_geometry()
+
+      heightOffset = windowGeometry[3] - clientWindowGeometry[3]
+
+      y -= 3 # border-radius of panel
+      height += 3
+
+      # workround for emacs
+      # if win.get_class_instance_name() is 'emacs'
+      #   width += 3
+      #   height += 3
+      #   x -= 1
+
+      target = [x, y, width, height + heightOffset]
       setGeometry win, target
 
       # fix

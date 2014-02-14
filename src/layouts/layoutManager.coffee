@@ -84,7 +84,7 @@ class LayoutManager
     setGeometry = (wnckWindow, geometry) ->
       global.log geometry
       wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
-      geometry = geometry.map (elem) -> parseInt elem
+      geometry = geometry.map (elem) -> Math.round elem
       [x, y, width, height] = geometry
       wnckWindow.set_geometry 0, 15, x, y, width, height
 
@@ -101,13 +101,6 @@ class LayoutManager
       heightOffset = windowGeometry[3] - clientWindowGeometry[3]
 
       y -= 3 # border-radius of panel
-      height += 3
-
-      # workround for emacs
-      # if win.get_class_instance_name() is 'emacs'
-      #   width += 3
-      #   height += 3
-      #   x -= 1
 
       target = [x, y, width, height + heightOffset]
       setGeometry win, target

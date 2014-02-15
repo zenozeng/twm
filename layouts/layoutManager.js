@@ -63,7 +63,7 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.apply = function(layoutName, filter) {
-    var areas, avaliableHeight, avaliableWidth, currentWorkspace, file, layout, monitor, screen, setGeometry, windows;
+    var areas, avaliableHeight, avaliableWidth, currentWorkspace, file, layout, monitor, screen, setGeometry, updateWindows, windows;
     screen = Wnck.Screen.get_default();
     windows = screen.get_windows();
     currentWorkspace = screen.get_active_workspace();
@@ -97,21 +97,26 @@ LayoutManager = (function() {
       x = geometry[0], y = geometry[1], width = geometry[2], height = geometry[3];
       return wnckWindow.set_geometry(0, 15, x, y, width, height);
     };
-    return windows.forEach(function(win, index) {
-      var clientWindowGeometry, height, heightOffset, target, width, widthOffset, windowGeometry, x, y, _ref;
-      _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
-      x = x * avaliableWidth;
-      y = y * avaliableHeight;
-      width = width * avaliableWidth;
-      height = height * avaliableHeight;
-      clientWindowGeometry = win.get_client_window_geometry();
-      windowGeometry = win.get_geometry();
-      widthOffset = windowGeometry[2] - clientWindowGeometry[2];
-      heightOffset = windowGeometry[3] - clientWindowGeometry[3];
-      y -= 3;
-      target = [x, y, width + widthOffset, height + heightOffset];
-      return setGeometry(win, target);
-    });
+    updateWindows = function() {
+      return windows.forEach(function(win, index) {
+        var clientWindowGeometry, height, heightOffset, target, width, widthOffset, windowGeometry, x, y, _ref;
+        _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
+        x = x * avaliableWidth;
+        y = y * avaliableHeight;
+        width = width * avaliableWidth;
+        height = height * avaliableHeight;
+        clientWindowGeometry = win.get_client_window_geometry();
+        windowGeometry = win.get_geometry();
+        widthOffset = windowGeometry[2] - clientWindowGeometry[2];
+        heightOffset = windowGeometry[3] - clientWindowGeometry[3];
+        y -= 3;
+        target = [x, y, width + widthOffset, height + heightOffset];
+        return setGeometry(win, target);
+      });
+    };
+    updateWindows();
+    delay(300, updateWindows);
+    return delay(600, updateWindows);
   };
 
 

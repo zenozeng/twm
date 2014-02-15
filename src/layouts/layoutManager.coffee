@@ -84,22 +84,28 @@ class LayoutManager
       [x, y, width, height] = geometry
       wnckWindow.set_geometry 0, 15, x, y, width, height
 
-    windows.forEach (win, index) ->
-      {x, y, width, height} = areas[index]
-      x = x * avaliableWidth
-      y = y * avaliableHeight
-      width = width * avaliableWidth
-      height = height * avaliableHeight
+    updateWindows = ->
 
-      clientWindowGeometry = win.get_client_window_geometry()
-      windowGeometry = win.get_geometry()
-      widthOffset = windowGeometry[2] - clientWindowGeometry[2]
-      heightOffset = windowGeometry[3] - clientWindowGeometry[3]
+      windows.forEach (win, index) ->
+        {x, y, width, height} = areas[index]
+        x = x * avaliableWidth
+        y = y * avaliableHeight
+        width = width * avaliableWidth
+        height = height * avaliableHeight
 
-      y -= 3 # border-radius of panel
+        clientWindowGeometry = win.get_client_window_geometry()
+        windowGeometry = win.get_geometry()
+        widthOffset = windowGeometry[2] - clientWindowGeometry[2]
+        heightOffset = windowGeometry[3] - clientWindowGeometry[3]
 
-      target = [x, y, width + widthOffset, height + heightOffset]
-      setGeometry win, target
+        y -= 3 # border-radius of panel
+
+        target = [x, y, width + widthOffset, height + heightOffset]
+        setGeometry win, target
+
+    updateWindows()
+    delay 300, updateWindows
+    delay 600, updateWindows
 
   ###
   List all avaliable layouts, returns an array like ["2-column", "3-column"]

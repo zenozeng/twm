@@ -56,6 +56,24 @@ LayoutManager = (function() {
 
 
   /*
+  Apply Float Layout
+  
+  @private
+   */
+
+  LayoutManager.prototype.float = function(wnckWindows) {
+    return wnckWindows.forEach(function(wnckWindow) {
+      var regExp, xid, xids;
+      xid = wnckWindow.get_xid();
+      xids = spawnSync("xwininfo -children -id " + xid);
+      regExp = new RegExp('0x[0-9a-f]{3,}', 'g');
+      xid = xids.match(regExp)[1];
+      return spawnSync('xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x1, 0x0, 0x0"');
+    });
+  };
+
+
+  /*
   Apply Layout
   
   @param [String] layoutName Layout Name
@@ -72,6 +90,10 @@ LayoutManager = (function() {
     });
     if (filter != null) {
       windows = windows.filter(filter);
+    }
+    if (layoutName === 'float') {
+      this.float(windows);
+      return null;
     }
     windows.forEach(function(wnckWindow) {
       var xid;

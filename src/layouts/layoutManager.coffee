@@ -37,6 +37,22 @@ class LayoutManager
   unset: (layoutName) -> @layouts[layoutName] = null
 
   ###
+  Apply Float Layout
+
+  @private
+  ###
+  float: (wnckWindows) ->
+    wnckWindows.forEach (wnckWindow) ->
+      xid = wnckWindow.get_xid()
+      # use child's xid
+      xids = spawnSync "xwininfo -children -id #{xid}"
+      regExp = new RegExp('0x[0-9a-f]{3,}', 'g')
+      xid = xids.match(regExp)[1]
+      spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x1, 0x0, 0x0"'
+      #wnckWindow.maximize()
+      #wnckWindow.unmaximize()
+
+  ###
   Apply Layout
 
   @param [String] layoutName Layout Name
@@ -53,6 +69,10 @@ class LayoutManager
       wnckWindow.is_visible_on_workspace(currentWorkspace)
 
     windows = windows.filter filter if filter?
+
+    if layoutName is 'float'
+      @float windows
+      return null
 
     # remove title bar
     # @see http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html

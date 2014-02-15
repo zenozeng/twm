@@ -3,10 +3,11 @@ Wnck = imports.gi.Wnck
 ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
-GdkX11 = imports.gi.GdkX11
 Gdk = imports.gi.Gdk
 
-{spawnSync} = helper
+
+
+{spawn, spawnSync, delay} = helper
 
 class LayoutManager
 
@@ -62,11 +63,12 @@ class LayoutManager
     # set geometry hints
     # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
     # allow setting width & height using px (for Gnome Termianl, Emacs)
-    gdkScreen = Gdk.Screen.get_default()
-    gdkWindows = gdkScreen.get_window_stack()
-    gdkWindows.forEach (gdkWindow) ->
-      geometry = new Gdk.Geometry({})
-      gdkWindow.set_geometry_hints(geometry, 1 << 5)
+    # this code must be run outside, or the window might crash
+    file = Extension.dir.get_path().toString() + '/gjs/hints.js'
+    spawn "gjs #{file}"
+    # kill the hints.js process
+    delay 1000, ->
+      spawn "sh -c \"ps -ef | grep gjs/hints.js | awk '{print $2}' | xargs kill -9\""
 
     # set layout
     monitor = Main.layoutManager.primaryMonitor

@@ -84,11 +84,11 @@ class LayoutManager
     # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
     # allow setting width & height using px (for Gnome Termianl, Emacs)
     # this code must be run outside, or the window might crash
-    file = Extension.dir.get_path().toString() + '/gjs/hints.js'
+    file = Extension.dir.get_path().toString() + '/gjs/set-geometry-hints.js'
     spawn "gjs #{file}"
     # kill the hints.js process
     delay 1000, ->
-      spawn "sh -c \"ps -ef | grep gjs/hints.js | awk '{print $2}' | xargs kill -9\""
+      spawn "sh -c \"ps -ef | grep gjs/set-geometry-hints.js | awk '{print $2}' | xargs kill -9\""
 
     # set layout
     monitor = Main.layoutManager.primaryMonitor

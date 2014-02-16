@@ -25,14 +25,9 @@ const main = function(args) {
     gdkWindows.forEach(function(gdkWindow) {
         let GdkWMDecoration = GDK_DECOR_MENU;
         gdkWindow.unmaximize();
+        gdkWindow.hide(); // otherwise gnome-shell will freeze
         gdkWindow.set_decorations(GDK_DECOR_ALL);
-        // reset window status so there won't be strange thing on the corner
-        gdkWindow.maximize();
-        let timestamp = parseInt((new Date()).getTime()/1000);
-        gdkWindow.focus(timestamp);
-        // GLib.timeout_add(GLib.PRIORITY_DEFAULT, 100, function() {
-        //     gdkWindow.unmaximize();
-        // });
+        gdkWindow.show();
     });
 
     Gtk.main();

@@ -21,7 +21,9 @@ runGjsScript = (scriptName, args) ->
 
 class LayoutManager
 
-  constructor: -> @layouts = {}
+  constructor: ->
+    @layouts = {}
+    @layoutOfWorkspace = {}
 
   ###
   Get Layout Func
@@ -46,6 +48,26 @@ class LayoutManager
   ###
   unset: (layoutName) -> @layouts[layoutName] = null
 
+
+  ###
+  List all avaliable layouts, returns an array like ["2-column", "3-column"]
+  ###
+  list: ->
+    layouts = ["float"]
+    for key, value of @layouts
+      layouts.push key if value?
+    layouts
+
+  ###
+  Get Layout of current workspace
+  ###
+  current: ->
+    screen = Wnck.Screen.get_default()
+    screen.force_update()
+    windows = screen.get_windows()
+    currentWorkspace = screen.get_active_workspace()
+    @layoutOfWorkspace[currentWorkspace.get_name()]
+
   ###
   Apply Float Layout
 
@@ -64,8 +86,11 @@ class LayoutManager
   apply: (layoutName, filter) ->
 
     screen = Wnck.Screen.get_default()
+    screen.force_update()
     windows = screen.get_windows()
     currentWorkspace = screen.get_active_workspace()
+
+    @layoutOfWorkspace[currentWorkspace.get_name()] = layoutName
 
     windows = windows.filter (wnckWindow) ->
       # This will also checks if window is not minimized or shaded
@@ -126,11 +151,3 @@ class LayoutManager
     delay 300, updateWindows
     delay 600, updateWindows
 
-  ###
-  List all avaliable layouts, returns an array like ["2-column", "3-column"]
-  ###
-  list: ->
-    layouts = []
-    for key, value of @layouts
-      layouts.push key if value?
-    layouts

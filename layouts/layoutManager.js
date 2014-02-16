@@ -32,6 +32,7 @@ spawn = helper.spawn, spawnSync = helper.spawnSync, delay = helper.delay;
 LayoutManager = (function() {
   function LayoutManager() {
     this.layouts = {};
+    this.layoutOfWorkspace = {};
   }
 
 
@@ -70,6 +71,38 @@ LayoutManager = (function() {
 
 
   /*
+  List all avaliable layouts, returns an array like ["2-column", "3-column"]
+   */
+
+  LayoutManager.prototype.list = function() {
+    var key, layouts, value, _ref;
+    layouts = ["float"];
+    _ref = this.layouts;
+    for (key in _ref) {
+      value = _ref[key];
+      if (value != null) {
+        layouts.push(key);
+      }
+    }
+    return layouts;
+  };
+
+
+  /*
+  Get Layout of current workspace
+   */
+
+  LayoutManager.prototype.current = function() {
+    var currentWorkspace, screen, windows;
+    screen = Wnck.Screen.get_default();
+    screen.force_update();
+    windows = screen.get_windows();
+    currentWorkspace = screen.get_active_workspace();
+    return this.layoutOfWorkspace[currentWorkspace.get_name()];
+  };
+
+
+  /*
   Apply Float Layout
   
   @private
@@ -96,8 +129,10 @@ LayoutManager = (function() {
   LayoutManager.prototype.apply = function(layoutName, filter) {
     var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, screen, setGeometry, updateWindows, windows, xids;
     screen = Wnck.Screen.get_default();
+    screen.force_update();
     windows = screen.get_windows();
     currentWorkspace = screen.get_active_workspace();
+    this.layoutOfWorkspace[currentWorkspace.get_name()] = layoutName;
     windows = windows.filter(function(wnckWindow) {
       return wnckWindow.is_visible_on_workspace(currentWorkspace);
     });
@@ -151,24 +186,6 @@ LayoutManager = (function() {
     updateWindows();
     delay(300, updateWindows);
     return delay(600, updateWindows);
-  };
-
-
-  /*
-  List all avaliable layouts, returns an array like ["2-column", "3-column"]
-   */
-
-  LayoutManager.prototype.list = function() {
-    var key, layouts, value, _ref;
-    layouts = [];
-    _ref = this.layouts;
-    for (key in _ref) {
-      value = _ref[key];
-      if (value != null) {
-        layouts.push(key);
-      }
-    }
-    return layouts;
   };
 
   return LayoutManager;

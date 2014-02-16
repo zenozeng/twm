@@ -15,8 +15,6 @@ layouts = new LayoutManager;
 
 layouts.set("2-column", Extension.imports.layouts["2-column"].layout);
 
-layouts.set("3-column", Extension.imports.layouts["3-column"].layout);
-
 config = {
   keybindings: {
     "<Super>e": function() {

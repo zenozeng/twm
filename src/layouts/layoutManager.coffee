@@ -5,7 +5,12 @@ Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 Gdk = imports.gi.Gdk
 
-
+runGjsScript = (scriptName) ->
+  fileName = "gjs/#{scriptName}.js"
+  file = Extension.dir.get_path().toString() + '/' + fileName
+  spawn "gjs #{file}"
+  delay 1000, -> # kill the process
+    spawn "sh -c \"ps -ef | grep #{fileName} | awk '{print $2}' | xargs kill -9\""
 
 {spawn, spawnSync, delay} = helper
 
@@ -42,15 +47,8 @@ class LayoutManager
   @private
   ###
   float: (wnckWindows) ->
-    wnckWindows.forEach (wnckWindow) ->
-      xid = wnckWindow.get_xid()
-      # use child's xid
-      xids = spawnSync "xwininfo -children -id #{xid}"
-      regExp = new RegExp('0x[0-9a-f]{3,}', 'g')
-      xid = xids.match(regExp)[1]
-      spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x1, 0x0, 0x0"'
-      #wnckWindow.maximize()
-      #wnckWindow.unmaximize()
+    global.log 'float!!!!'
+    runGjsScript "set-decorations-all"
 
   ###
   Apply Layout
@@ -75,20 +73,14 @@ class LayoutManager
       return null
 
     # remove title bar
-    # @see http://mathematicalcoffee.blogspot.com/2012/05/automatically-undecorate-maximised.html
-    windows.forEach (wnckWindow) ->
-      xid = wnckWindow.get_xid()
-      spawnSync 'xprop -id ' + xid + ' -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS "0x2, 0x0, 0x0, 0x0, 0x0"'
+    # this code must be run outside, or the window might crash
+    runGjsScript "set-decorations-0"
 
     # set geometry hints
     # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
     # allow setting width & height using px (for Gnome Termianl, Emacs)
     # this code must be run outside, or the window might crash
-    file = Extension.dir.get_path().toString() + '/gjs/set-geometry-hints.js'
-    spawn "gjs #{file}"
-    # kill the hints.js process
-    delay 1000, ->
-      spawn "sh -c \"ps -ef | grep gjs/set-geometry-hints.js | awk '{print $2}' | xargs kill -9\""
+    runGjsScript "set-geometry-hints"
 
     # set layout
     monitor = Main.layoutManager.primaryMonitor

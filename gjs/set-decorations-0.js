@@ -3,22 +3,20 @@
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const GLib = imports.gi.GLib;
+const GdkX11 = imports.gi.GdkX11;
 
-Gtk.init(null, 0);
-const gdkScreen = Gdk.Screen.get_default();
-const gdkWindows = gdkScreen.get_window_stack();
+const main = function(args) {
+    let xids = args.xids;
 
-const GDK_DECOR_ALL = 1 << 0;
-const GDK_DECOR_BORDER = 1 << 1;
-const GDK_DECOR_RESIZEH = 1 << 2;
-const GDK_DECOR_TITLE = 1 << 3;
-const GDK_DECOR_MENU = 1 << 4;
-const GDK_DECOR_MINIMIZE = 1 << 5;
-const GDK_DECOR_MAXIMIZE = 1 << 6;
+    Gtk.init(null, 0);
 
-gdkWindows.forEach(function(gdkWindow) {
-    let GdkWMDecoration = GDK_DECOR_MENU;
-    gdkWindow.unmaximize(); // will carsh without this
-    gdkWindow.set_decorations(0);
-});
-Gtk.main();
+    const gdkWindows = xids.map(function(xid) {
+        return GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), xid);
+    });
+
+    gdkWindows.forEach(function(gdkWindow) {
+        gdkWindow.unmaximize(); // will carsh without this
+        gdkWindow.set_decorations(0);
+    });
+    Gtk.main();
+}

@@ -5,12 +5,17 @@ Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 Gdk = imports.gi.Gdk
 
-runGjsScript = (scriptName) ->
-  fileName = "gjs/#{scriptName}.js"
-  file = Extension.dir.get_path().toString() + '/' + fileName
-  spawn "gjs #{file}"
-  delay 1000, -> # kill the process
-    spawn "sh -c \"ps -ef | grep #{fileName} | awk '{print $2}' | xargs kill -9\""
+runGjsScript = (scriptName, args) ->
+  gjsDir = Extension.dir.get_path().toString() + '/gjs/'
+  args = JSON.stringify args
+  timestamp = (new Date()).getTime()
+  gjs = "imports[\"#{scriptName}\"].main(#{args});//#{timestamp}"
+  cmd = "gjs -c '#{gjs}' -I #{gjsDir}"
+  spawn cmd
+
+  gc = ->
+    spawn "sh -c \"ps -ef | grep #{gjsDir} | grep #{timestamp} | awk '{print $2}' | xargs kill -9\""
+  delay 1000, gc
 
 {spawn, spawnSync, delay} = helper
 
@@ -47,8 +52,8 @@ class LayoutManager
   @private
   ###
   float: (wnckWindows) ->
-    global.log 'float!!!!'
-    runGjsScript "set-decorations-all"
+    xids = wnckWindows.map (wnckWindow) -> wnckWindow.get_xid()
+    runGjsScript "set-decorations-all", {xids: xids}
 
   ###
   Apply Layout
@@ -72,15 +77,17 @@ class LayoutManager
       @float windows
       return null
 
+    xids = windows.map (wnckWindow) -> wnckWindow.get_xid()
+
     # remove title bar
     # this code must be run outside, or the window might crash
-    runGjsScript "set-decorations-0"
+    runGjsScript "set-decorations-0", {xids: xids}
 
     # set geometry hints
     # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
     # allow setting width & height using px (for Gnome Termianl, Emacs)
     # this code must be run outside, or the window might crash
-    runGjsScript "set-geometry-hints"
+    runGjsScript "set-geometry-hints", {xids: xids}
 
     # set layout
     monitor = Main.layoutManager.primaryMonitor

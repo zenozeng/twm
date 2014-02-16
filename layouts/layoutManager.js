@@ -13,14 +13,18 @@ helper = Extension.imports.helper;
 
 Gdk = imports.gi.Gdk;
 
-runGjsScript = function(scriptName) {
-  var file, fileName;
-  fileName = "gjs/" + scriptName + ".js";
-  file = Extension.dir.get_path().toString() + '/' + fileName;
-  spawn("gjs " + file);
-  return delay(1000, function() {
-    return spawn("sh -c \"ps -ef | grep " + fileName + " | awk '{print $2}' | xargs kill -9\"");
-  });
+runGjsScript = function(scriptName, args) {
+  var cmd, gc, gjs, gjsDir, timestamp;
+  gjsDir = Extension.dir.get_path().toString() + '/gjs/';
+  args = JSON.stringify(args);
+  timestamp = (new Date()).getTime();
+  gjs = "imports[\"" + scriptName + "\"].main(" + args + ");//" + timestamp;
+  cmd = "gjs -c '" + gjs + "' -I " + gjsDir;
+  spawn(cmd);
+  gc = function() {
+    return spawn("sh -c \"ps -ef | grep " + gjsDir + " | grep " + timestamp + " | awk '{print $2}' | xargs kill -9\"");
+  };
+  return delay(1000, gc);
 };
 
 spawn = helper.spawn, spawnSync = helper.spawnSync, delay = helper.delay;
@@ -72,8 +76,13 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.float = function(wnckWindows) {
-    global.log('float!!!!');
-    return runGjsScript("set-decorations-all");
+    var xids;
+    xids = wnckWindows.map(function(wnckWindow) {
+      return wnckWindow.get_xid();
+    });
+    return runGjsScript("set-decorations-all", {
+      xids: xids
+    });
   };
 
 
@@ -85,7 +94,7 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.apply = function(layoutName, filter) {
-    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, screen, setGeometry, updateWindows, windows;
+    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, screen, setGeometry, updateWindows, windows, xids;
     screen = Wnck.Screen.get_default();
     windows = screen.get_windows();
     currentWorkspace = screen.get_active_workspace();
@@ -99,8 +108,15 @@ LayoutManager = (function() {
       this.float(windows);
       return null;
     }
-    runGjsScript("set-decorations-0");
-    runGjsScript("set-geometry-hints");
+    xids = windows.map(function(wnckWindow) {
+      return wnckWindow.get_xid();
+    });
+    runGjsScript("set-decorations-0", {
+      xids: xids
+    });
+    runGjsScript("set-geometry-hints", {
+      xids: xids
+    });
     monitor = Main.layoutManager.primaryMonitor;
     avaliableWidth = monitor.width;
     avaliableHeight = monitor.height - Main.panel.actor.height;

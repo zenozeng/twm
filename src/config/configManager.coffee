@@ -6,7 +6,7 @@ helper = Extension.imports.helper
 defalutConfig = Extension.imports.config.defaultConfig.config
 fs = Extension.imports.api.fs
 
-class Config
+class ConfigManager
 
   constructor: ->
 

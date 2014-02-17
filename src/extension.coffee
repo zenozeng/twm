@@ -2,7 +2,7 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 keybindings = Extension.imports.api.keybindings
-Config = Extension.imports.config.config.Config
+ConfigManager = Extension.imports.config.configManager.ConfigManager
 Wnck = imports.gi.Wnck
 
 init = ->
@@ -13,7 +13,7 @@ init = ->
   try
 
     # load config
-    config = new Config
+    config = new ConfigManager
 
     # apply keybindings from config
     for keybinding, callback of config.keybindings

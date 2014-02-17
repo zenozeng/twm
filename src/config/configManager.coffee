@@ -5,6 +5,7 @@ helper = Extension.imports.helper
 {spawn, spawnSync} = helper
 defalutConfig = Extension.imports.config.defaultConfig.config
 fs = Extension.imports.api.fs
+ShellJS = imports.gi.ShellJS
 
 class ConfigManager
 
@@ -13,18 +14,16 @@ class ConfigManager
     HOME = helper.spawnSync "sh -c 'echo $HOME'"
     PATH = (HOME + '/.twm').replace('\n', '')
 
-    if fs.existsSync PATH + '/twm.js'
-      js = fs.readFileSync PATH + '/twm.js'
-    else if fs.existsSync PATH + '/twm.coffee'
-      filename = PATH + '/twm.coffee'
-      js = spawnSync "coffee -bp #{filename}"
-    else
-      @create()
+    @installImporter PATH
 
+    Config = global.twm.Config
     try
-      config = (Function(js + ';return config;'))()
+      config = Config.imports.twm.config
     catch e
-      helper.log "Error found in your config file: #{e}"
+      helper.log "ConfigManager: #{e}"
+      config = null
+
+    config = {} unless config?
 
     for key, value of defalutConfig
       unless config[key]?
@@ -33,8 +32,12 @@ class ConfigManager
     return config
 
   ###
-  Cp config/defalut.js to ~/.twm/twm.js
+  Add imports for config
 
   @private
   ###
-  create: -> false
+  installImporter: (configPath) ->
+    global.twm.importsTargetObject = {}
+    ShellJS.add_extension_importer('global.twm.importsTargetObject', 'imports', configPath);
+    global.twm.Extension = {imports: Extension.imports}
+    global.twm.Config = {imports: global.twm.importsTargetObject.imports}

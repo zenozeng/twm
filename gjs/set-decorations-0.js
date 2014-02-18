@@ -1,5 +1,9 @@
 // This GJS script will remove all decoration
 
+// You should unmaximize all windows before call this script
+// otherwise the windows might crash
+// They are not included by default because this might change active status of windows
+
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
 const GLib = imports.gi.GLib;
@@ -15,7 +19,7 @@ const main = function(args) {
     });
 
     gdkWindows.forEach(function(gdkWindow) {
-        gdkWindow.unmaximize(); // will carsh without this
+        //gdkWindow.unmaximize();
         gdkWindow.set_decorations(0);
     });
     Gtk.main();

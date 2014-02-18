@@ -13,7 +13,7 @@ const main = function(args) {
     });
     let geometry = new Gdk.Geometry({});
     gdkWindows.forEach(function(gdkWindow) {
-        gdkWindow.set_geometry_hints(geometry, 1 << 5)
+        gdkWindow.set_geometry_hints(geometry, 1 << 5);
     });
     Gtk.main();
 }

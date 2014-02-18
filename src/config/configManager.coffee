@@ -1,6 +1,5 @@
 ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
-uuid = Extension.uuid
 helper = Extension.imports.helper
 {spawn, spawnSync} = helper
 defalutConfig = Extension.imports.config.defaultConfig.config

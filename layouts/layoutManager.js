@@ -112,21 +112,19 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.float = function(wnckWindows) {
-    var activeWindow, xids;
+    var activeWindow, activeWindowXid, xids;
     activeWindow = wnckWindows.filter(function(win) {
       return win.is_active();
     });
     activeWindow = activeWindow[0];
+    activeWindowXid = activeWindow != null ? activeWindow.get_xid() : null;
     xids = wnckWindows.map(function(wnckWindow) {
       return wnckWindow.get_xid();
     });
-    runGjsScript("set-decorations-all", {
-      xids: xids
+    return runGjsScript("set-float", {
+      xids: xids,
+      activeWindowXid: activeWindowXid
     });
-    helper.log(activeWindow.get_xid());
-    if (activeWindow != null) {
-      return activeWindow.activate(helper.getXServerTimestamp());
-    }
   };
 
 
@@ -138,7 +136,7 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.apply = function(layoutName, filter) {
-    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, screen, setGeometry, updateWindows, windows, xids;
+    var activeWindow, areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, refocus, screen, setGeometry, updateWindows, windows, xids;
     screen = Wnck.Screen.get_default();
     screen.force_update();
     windows = screen.get_windows();
@@ -157,12 +155,24 @@ LayoutManager = (function() {
     xids = windows.map(function(wnckWindow) {
       return wnckWindow.get_xid();
     });
+    windows.forEach(function(wnckWindow) {
+      return wnckWindow.unmaximize();
+    });
     runGjsScript("set-decorations-0", {
       xids: xids
     });
     runGjsScript("set-geometry-hints", {
       xids: xids
     });
+    activeWindow = windows.filter(function(win) {
+      return win.is_active();
+    });
+    activeWindow = activeWindow[0];
+    refocus = function() {
+      if (activeWindow != null) {
+        return activeWindow.activate(helper.getXServerTimestamp());
+      }
+    };
     monitor = Main.layoutManager.primaryMonitor;
     avaliableWidth = monitor.width;
     avaliableHeight = monitor.height - Main.panel.actor.height;
@@ -179,11 +189,6 @@ LayoutManager = (function() {
       return wnckWindow.set_geometry(0, 15, x, y, width, height);
     };
     updateWindows = function() {
-      var activeWindow;
-      activeWindow = windows.filter(function(win) {
-        return win.is_active();
-      });
-      activeWindow = activeWindow[0];
       windows.forEach(function(win, index) {
         var clientWindowGeometry, height, heightOffset, target, width, widthOffset, windowGeometry, x, y, _ref;
         _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
@@ -199,9 +204,7 @@ LayoutManager = (function() {
         target = [x, y, width + widthOffset, height + heightOffset];
         return setGeometry(win, target);
       });
-      if (activeWindow != null) {
-        return activeWindow.activate(helper.getXServerTimestamp());
-      }
+      return refocus();
     };
     updateWindows();
     delay(300, updateWindows);

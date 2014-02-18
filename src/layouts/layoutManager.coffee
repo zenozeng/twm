@@ -79,12 +79,10 @@ class LayoutManager
     # get current active window
     activeWindow = wnckWindows.filter (win) -> win.is_active()
     activeWindow = activeWindow[0]
-    # reset decorations
+    activeWindowXid = if activeWindow? then activeWindow.get_xid() else null
+    # apply
     xids = wnckWindows.map (wnckWindow) -> wnckWindow.get_xid()
-    runGjsScript "set-decorations-all", {xids: xids}
-    # refocus
-    helper.log activeWindow.get_xid()
-    activeWindow.activate(helper.getXServerTimestamp()) if activeWindow?
+    runGjsScript "set-float", {xids: xids, activeWindowXid: activeWindowXid}
 
   ###
   Apply Layout
@@ -115,6 +113,7 @@ class LayoutManager
 
     # remove title bar
     # this code must be run outside, or the window might crash
+    windows.forEach (wnckWindow) -> wnckWindow.unmaximize() # unmaximize to avoid carsh
     runGjsScript "set-decorations-0", {xids: xids}
 
     # set geometry hints
@@ -122,6 +121,12 @@ class LayoutManager
     # allow setting width & height using px (for Gnome Termianl, Emacs)
     # this code must be run outside, or the window might crash
     runGjsScript "set-geometry-hints", {xids: xids}
+
+    # get current active window
+    activeWindow = windows.filter (win) -> win.is_active()
+    activeWindow = activeWindow[0]
+    refocus = ->
+      activeWindow.activate(helper.getXServerTimestamp()) if activeWindow?
 
     # set layout
     monitor = Main.layoutManager.primaryMonitor
@@ -140,10 +145,6 @@ class LayoutManager
 
     updateWindows = ->
 
-      # get current active window
-      activeWindow = windows.filter (win) -> win.is_active()
-      activeWindow = activeWindow[0]
-
       windows.forEach (win, index) ->
         {x, y, width, height} = areas[index]
         x = x * avaliableWidth
@@ -161,8 +162,7 @@ class LayoutManager
         target = [x, y, width + widthOffset, height + heightOffset]
         setGeometry win, target
 
-      # refocus
-      activeWindow.activate(helper.getXServerTimestamp()) if activeWindow?
+      refocus()
 
     updateWindows()
     delay 300, updateWindows

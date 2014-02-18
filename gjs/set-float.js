@@ -1,4 +1,5 @@
 // This GJS script will reset decoration to all
+// And will auto activate the last active window
 
 const Gtk = imports.gi.Gtk;
 const Gdk = imports.gi.Gdk;
@@ -7,6 +8,7 @@ const GdkX11 = imports.gi.GdkX11;
 
 const main = function(args) {
     let xids = args.xids;
+    let activeWindowXid = args.activeWindowXid;
 
     Gtk.init(null, 0);
 
@@ -22,6 +24,7 @@ const main = function(args) {
     const GDK_DECOR_MINIMIZE = 1 << 5;
     const GDK_DECOR_MAXIMIZE = 1 << 6;
 
+    // reset decorations
     gdkWindows.forEach(function(gdkWindow) {
         let GdkWMDecoration = GDK_DECOR_MENU;
         gdkWindow.unmaximize();
@@ -29,6 +32,12 @@ const main = function(args) {
         gdkWindow.set_decorations(GDK_DECOR_ALL);
         gdkWindow.show();
     });
+
+    let activeWindow = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), activeWindowXid);
+
+    // refocus
+    activeWindow.hide();
+    activeWindow.show();
 
     Gtk.main();
 }

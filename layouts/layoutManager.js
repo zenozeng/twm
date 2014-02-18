@@ -112,12 +112,18 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.float = function(wnckWindows) {
-    var activeWindow, activeWindowXid, xids;
+    var activeWindow, activeWindowXid, height, monitor, width, xids;
     activeWindow = wnckWindows.filter(function(win) {
       return win.is_active();
     });
     activeWindow = activeWindow[0];
     activeWindowXid = activeWindow != null ? activeWindow.get_xid() : null;
+    monitor = Main.layoutManager.primaryMonitor;
+    width = monitor.width * 2 / 3;
+    height = monitor.height * 2 / 3;
+    wnckWindows.forEach(function(wnckWindow) {
+      return wnckWindow.set_geometry(0, (1 << 2) | (1 << 3), 0, 0, width, height);
+    });
     xids = wnckWindows.map(function(wnckWindow) {
       return wnckWindow.get_xid();
     });

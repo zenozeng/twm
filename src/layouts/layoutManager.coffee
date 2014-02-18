@@ -80,6 +80,11 @@ class LayoutManager
     activeWindow = wnckWindows.filter (win) -> win.is_active()
     activeWindow = activeWindow[0]
     activeWindowXid = if activeWindow? then activeWindow.get_xid() else null
+    # reset width and height
+    monitor = Main.layoutManager.primaryMonitor
+    width = monitor.width * 2 / 3
+    height = monitor.height * 2 / 3
+    wnckWindows.forEach (wnckWindow) -> wnckWindow.set_geometry 0, (1 << 2) | (1 << 3), 0, 0, width, height
     # apply
     xids = wnckWindows.map (wnckWindow) -> wnckWindow.get_xid()
     runGjsScript "set-float", {xids: xids, activeWindowXid: activeWindowXid}

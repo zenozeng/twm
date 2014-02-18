@@ -2,6 +2,8 @@
 
 Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.10 yet.
 
+Based on gdk3 and libwnck.
+
 这个插件不是那么得符合 Gnome 的 Coding Style，颇有些黑科技的味道，但是我只是希望暴露到 user 上的东西
 可以更好更容易的去使用就好了。也许这支插件不会上 Gnome 官方的插件中心。
 

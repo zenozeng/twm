@@ -22,3 +22,5 @@ spawnSync = (cmd) ->
 
 delay = (time, callback) ->
   GLib.timeout_add GLib.PRIORITY_DEFAULT, time, -> callback?()
+
+getXServerTimestamp = -> parseInt(GLib.get_monotonic_time()/1000)

@@ -7,7 +7,7 @@ Extension = ExtensionUtils.getCurrentExtension();
 
 helper = Extension.imports.helper;
 
-keybindings = Extension.imports.api.keybindings;
+keybindings = Extension.imports.lib.keybindings;
 
 ConfigManager = Extension.imports.config.configManager.ConfigManager;
 

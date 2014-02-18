@@ -4,8 +4,9 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 Gdk = imports.gi.Gdk
+GLib = imports.gi.GLib
 
-runGjsScript = (scriptName, args) ->
+runGjsScript = (scriptName, args, callback) ->
   gjsDir = Extension.dir.get_path().toString() + '/gjs/'
   args = JSON.stringify args
   timestamp = (new Date()).getTime()
@@ -15,6 +16,7 @@ runGjsScript = (scriptName, args) ->
 
   gc = ->
     spawn "sh -c \"ps -ef | grep #{gjsDir} | grep #{timestamp} | awk '{print $2}' | xargs kill -9\""
+    callback?()
   delay 1000, gc
 
 {spawn, spawnSync, delay} = helper
@@ -74,8 +76,15 @@ class LayoutManager
   @private
   ###
   float: (wnckWindows) ->
+    # get current active window
+    activeWindow = wnckWindows.filter (win) -> win.is_active()
+    activeWindow = activeWindow[0]
+    # reset decorations
     xids = wnckWindows.map (wnckWindow) -> wnckWindow.get_xid()
     runGjsScript "set-decorations-all", {xids: xids}
+    # refocus
+    helper.log activeWindow.get_xid()
+    activeWindow.activate(helper.getXServerTimestamp()) if activeWindow?
 
   ###
   Apply Layout
@@ -123,12 +132,17 @@ class LayoutManager
     areas = layout windows.length
 
     setGeometry = (wnckWindow, geometry) ->
+      wnckWindow.activate(helper.getXServerTimestamp()) # avoid last_focus_time (9747565) is greater than comparison timestamp message
       wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
       geometry = geometry.map (elem) -> Math.round elem
       [x, y, width, height] = geometry
       wnckWindow.set_geometry 0, 15, x, y, width, height
 
     updateWindows = ->
+
+      # get current active window
+      activeWindow = windows.filter (win) -> win.is_active()
+      activeWindow = activeWindow[0]
 
       windows.forEach (win, index) ->
         {x, y, width, height} = areas[index]
@@ -146,6 +160,9 @@ class LayoutManager
 
         target = [x, y, width + widthOffset, height + heightOffset]
         setGeometry win, target
+
+      # refocus
+      activeWindow.activate(helper.getXServerTimestamp()) if activeWindow?
 
     updateWindows()
     delay 300, updateWindows

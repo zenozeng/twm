@@ -4,7 +4,6 @@ uuid = Extension.uuid
 helper = Extension.imports.helper
 {spawn, spawnSync} = helper
 defalutConfig = Extension.imports.config.defaultConfig.config
-fs = Extension.imports.api.fs
 ShellJS = imports.gi.ShellJS
 
 class ConfigManager

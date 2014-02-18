@@ -124,9 +124,8 @@ class LayoutManager
 
     # get current active window
     activeWindow = windows.filter (win) -> win.is_active()
-    activeWindow = activeWindow[0]
-    refocus = ->
-      activeWindow.activate(helper.getXServerTimestamp()) if activeWindow?
+    activeWindow = activeWindow[0] or windows[0]
+    refocus = -> activeWindow.activate(helper.getXServerTimestamp())
 
     # set layout
     monitor = Main.layoutManager.primaryMonitor

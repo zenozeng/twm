@@ -167,11 +167,9 @@ LayoutManager = (function() {
     activeWindow = windows.filter(function(win) {
       return win.is_active();
     });
-    activeWindow = activeWindow[0];
+    activeWindow = activeWindow[0] || windows[0];
     refocus = function() {
-      if (activeWindow != null) {
-        return activeWindow.activate(helper.getXServerTimestamp());
-      }
+      return activeWindow.activate(helper.getXServerTimestamp());
     };
     monitor = Main.layoutManager.primaryMonitor;
     avaliableWidth = monitor.width;

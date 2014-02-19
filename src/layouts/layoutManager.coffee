@@ -75,10 +75,8 @@ class LayoutManager
 
   @private
   ###
-  float: (wnckWindows) ->
+  float: (wnckWindows, activeWindow) ->
     # get current active window
-    activeWindow = wnckWindows.filter (win) -> win.is_active()
-    activeWindow = activeWindow[0]
     activeWindowXid = if activeWindow? then activeWindow.get_xid() else null
     # reset width and height
     monitor = Main.layoutManager.primaryMonitor
@@ -101,6 +99,7 @@ class LayoutManager
     screen.force_update()
     windows = screen.get_windows()
     currentWorkspace = screen.get_active_workspace()
+    activeWindow = screen.get_active_window()
 
     @layoutOfWorkspace[currentWorkspace.get_name()] = layoutName
 
@@ -111,7 +110,7 @@ class LayoutManager
     windows = windows.filter filter if filter?
 
     if layoutName is 'float'
-      @float windows
+      @float windows, activeWindow
       return null
 
     xids = windows.map (wnckWindow) -> wnckWindow.get_xid()
@@ -128,9 +127,11 @@ class LayoutManager
     runGjsScript "set-geometry-hints", {xids: xids}
 
     # get current active window
-    activeWindow = windows.filter (win) -> win.is_active()
-    activeWindow = activeWindow[0] or windows[0]
-    refocus = -> activeWindow.activate(helper.getXServerTimestamp())
+    refocus = ->
+      if activeWindow?
+        activeWindow.activate(helper.getXServerTimestamp())
+      else
+        false
 
     # set layout
     monitor = Main.layoutManager.primaryMonitor
@@ -171,4 +172,3 @@ class LayoutManager
     updateWindows()
     delay 300, updateWindows
     delay 600, updateWindows
-

@@ -29,6 +29,9 @@ init = function() {
     if (typeof config.onStartup === "function") {
       config.onStartup();
     }
+    config.onWindowChange = function() {
+      return helper.log("win change");
+    };
   } catch (_error) {
     e = _error;
     global.log(e);

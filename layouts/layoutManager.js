@@ -111,12 +111,8 @@ LayoutManager = (function() {
   @private
    */
 
-  LayoutManager.prototype.float = function(wnckWindows) {
-    var activeWindow, activeWindowXid, height, monitor, width, xids;
-    activeWindow = wnckWindows.filter(function(win) {
-      return win.is_active();
-    });
-    activeWindow = activeWindow[0];
+  LayoutManager.prototype.float = function(wnckWindows, activeWindow) {
+    var activeWindowXid, height, monitor, width, xids;
     activeWindowXid = activeWindow != null ? activeWindow.get_xid() : null;
     monitor = Main.layoutManager.primaryMonitor;
     width = monitor.width * 2 / 3;
@@ -147,6 +143,7 @@ LayoutManager = (function() {
     screen.force_update();
     windows = screen.get_windows();
     currentWorkspace = screen.get_active_workspace();
+    activeWindow = screen.get_active_window();
     this.layoutOfWorkspace[currentWorkspace.get_name()] = layoutName;
     windows = windows.filter(function(wnckWindow) {
       return wnckWindow.is_visible_on_workspace(currentWorkspace);
@@ -155,7 +152,7 @@ LayoutManager = (function() {
       windows = windows.filter(filter);
     }
     if (layoutName === 'float') {
-      this.float(windows);
+      this.float(windows, activeWindow);
       return null;
     }
     xids = windows.map(function(wnckWindow) {
@@ -170,12 +167,12 @@ LayoutManager = (function() {
     runGjsScript("set-geometry-hints", {
       xids: xids
     });
-    activeWindow = windows.filter(function(win) {
-      return win.is_active();
-    });
-    activeWindow = activeWindow[0] || windows[0];
     refocus = function() {
-      return activeWindow.activate(helper.getXServerTimestamp());
+      if (activeWindow != null) {
+        return activeWindow.activate(helper.getXServerTimestamp());
+      } else {
+        return false;
+      }
     };
     monitor = Main.layoutManager.primaryMonitor;
     avaliableWidth = monitor.width;

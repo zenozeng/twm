@@ -23,6 +23,9 @@ init = ->
     # fire onStartup Hook
     config.onStartup?()
 
+    # bind to window event
+    config.onWindowChange = -> helper.log "win change"
+
   catch e
     global.log e
     helper.log e

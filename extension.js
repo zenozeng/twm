@@ -29,21 +29,25 @@ init = function() {
     }
     keybindings.apply();
     wm = new WindowManager;
-    onWindowChange = function(wnckScreen, wnckWindow) {
+    onWindowChange = function(wnckWindow, activeWindow) {
       var currentLayout, currentWorkspace;
       currentWorkspace = wm.getActiveWorkspace();
       if (wnckWindow.is_visible_on_workspace(currentWorkspace)) {
         if (config.windowsFilter(wnckWindow)) {
           currentLayout = config.layouts.current();
           if ((currentLayout != null) && currentLayout !== 'float') {
-            config.layouts.apply(currentLayout, config.windowsFilter);
+            config.layouts.apply(currentLayout, config.windowsFilter, activeWindow);
           }
         }
       }
       return false;
     };
-    wm.connect("window-opened", onWindowChange);
-    wm.connect("window-closed", onWindowChange);
+    wm.connect("window-opened", function(wnckScreen, wnckWindow) {
+      return onWindowChange(wnckWindow, wnckWindow);
+    });
+    wm.connect("window-closed", function(wnckScreen, wnckWindow) {
+      return onWindowChange(wnckWindow, null);
+    });
     if (typeof config.onStartup === "function") {
       config.onStartup();
     }

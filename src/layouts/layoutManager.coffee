@@ -3,8 +3,6 @@ Wnck = imports.gi.Wnck
 ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
-Gdk = imports.gi.Gdk
-GLib = imports.gi.GLib
 WindowManager = Extension.imports.lib.windowManager.WindowManager
 
 wm = new WindowManager
@@ -91,11 +89,12 @@ class LayoutManager
   @param [String] layoutName Layout Name
   @param [Function] filter Filter function which takes WnckWindow as param and returns false this window should be ignored
   ###
-  apply: (layoutName, filter) ->
+  apply: (layoutName, filter, activeWindow = wm.getActiveWindow()) ->
 
     windows = wm.getWindows()
     currentWorkspace = wm.getActiveWorkspace()
-    activeWindow = wm.getActiveWindow()
+
+    global.log activeWindow.get_name()
 
     @layoutOfWorkspace[currentWorkspace.get_name()] = layoutName
 

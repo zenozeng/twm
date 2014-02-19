@@ -39,10 +39,7 @@ config = {
     }
   },
   layouts: layouts,
-  onWindowChange: function() {
-    return false;
-  },
-  windowsFilter: function(win) {
+  windowsFilter: function(wnckWindow) {
     return true;
   }
 };

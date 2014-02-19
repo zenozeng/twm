@@ -23,8 +23,19 @@ init = ->
     # fire onStartup Hook
     config.onStartup?()
 
-    # bind to window event
-    config.onWindowChange = -> helper.log "win change"
+    # bind on window change events
+    onWindowChange = (wnckScreen, wnckWindow) ->
+      wnckScreen.force_update()
+      currentWorkspace = wnckScreen.get_active_workspace()
+      if wnckWindow.is_visible_on_workspace currentWorkspace
+        if config.windowsFilter(wnckWindow)
+          currentLayout = config.layouts.current()
+          if currentLayout? and currentLayout isnt 'float'
+            config.layouts.apply currentLayout, config.windowsFilter
+      false
+    screen = Wnck.Screen.get_default()
+    screen.connect "window-opened", onWindowChange
+    screen.connect "window-closed", onWindowChange
 
   catch e
     global.log e

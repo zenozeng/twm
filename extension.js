@@ -14,7 +14,7 @@ ConfigManager = Extension.imports.config.configManager.ConfigManager;
 Wnck = imports.gi.Wnck;
 
 init = function() {
-  var callback, config, e, keybinding, _ref;
+  var callback, config, e, keybinding, onWindowChange, screen, _ref;
   global.twm = {
     functions: {}
   };
@@ -29,9 +29,23 @@ init = function() {
     if (typeof config.onStartup === "function") {
       config.onStartup();
     }
-    config.onWindowChange = function() {
-      return helper.log("win change");
+    onWindowChange = function(wnckScreen, wnckWindow) {
+      var currentLayout, currentWorkspace;
+      wnckScreen.force_update();
+      currentWorkspace = wnckScreen.get_active_workspace();
+      if (wnckWindow.is_visible_on_workspace(currentWorkspace)) {
+        if (config.windowsFilter(wnckWindow)) {
+          currentLayout = config.layouts.current();
+          if ((currentLayout != null) && currentLayout !== 'float') {
+            config.layouts.apply(currentLayout, config.windowsFilter);
+          }
+        }
+      }
+      return false;
     };
+    screen = Wnck.Screen.get_default();
+    screen.connect("window-opened", onWindowChange);
+    screen.connect("window-closed", onWindowChange);
   } catch (_error) {
     e = _error;
     global.log(e);

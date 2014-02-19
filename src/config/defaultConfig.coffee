@@ -20,6 +20,4 @@ config =
 
   layouts: layouts
 
-  onWindowChange: -> false
-
-  windowsFilter: (win) -> true
+  windowsFilter: (wnckWindow) -> true

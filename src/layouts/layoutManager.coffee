@@ -93,11 +93,9 @@ class LayoutManager
   ###
   apply: (layoutName, filter) ->
 
-    screen = Wnck.Screen.get_default()
-    screen.force_update()
-    windows = screen.get_windows()
-    currentWorkspace = screen.get_active_workspace()
-    activeWindow = screen.get_active_window()
+    windows = wm.getWindows()
+    currentWorkspace = wm.getActiveWorkspace()
+    activeWindow = wm.getActiveWindow()
 
     @layoutOfWorkspace[currentWorkspace.get_name()] = layoutName
 

@@ -100,6 +100,8 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.current = function() {
+    global.log(JSON.stringify(this.layoutOfWorkspace));
+    global.log(wm.getActiveWorkspace().get_name());
     return this.layoutOfWorkspace[wm.getActiveWorkspace().get_name()];
   };
 
@@ -137,12 +139,10 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.apply = function(layoutName, filter) {
-    var activeWindow, areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, refocus, screen, setGeometry, updateWindows, windows, xids;
-    screen = Wnck.Screen.get_default();
-    screen.force_update();
-    windows = screen.get_windows();
-    currentWorkspace = screen.get_active_workspace();
-    activeWindow = screen.get_active_window();
+    var activeWindow, areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, refocus, setGeometry, updateWindows, windows, xids;
+    windows = wm.getWindows();
+    currentWorkspace = wm.getActiveWorkspace();
+    activeWindow = wm.getActiveWindow();
     this.layoutOfWorkspace[currentWorkspace.get_name()] = layoutName;
     windows = windows.filter(function(wnckWindow) {
       return wnckWindow.is_visible_on_workspace(currentWorkspace);

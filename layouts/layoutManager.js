@@ -100,8 +100,6 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.current = function() {
-    global.log(JSON.stringify(this.layoutOfWorkspace));
-    global.log(wm.getActiveWorkspace().get_name());
     return this.layoutOfWorkspace[wm.getActiveWorkspace().get_name()];
   };
 
@@ -158,10 +156,9 @@ LayoutManager = (function() {
       return wnckWindow.get_xid();
     });
     windows.forEach(function(wnckWindow) {
-      return wnckWindow.unmaximize();
-    });
-    runGjsScript("set-decorations-0", {
-      xids: xids
+      return runGjsScript("set-decorations-0", {
+        xid: wnckWindow.get_xid()
+      });
     });
     runGjsScript("set-geometry-hints", {
       xids: xids

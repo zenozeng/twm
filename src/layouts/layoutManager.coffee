@@ -113,8 +113,8 @@ class LayoutManager
 
     # remove title bar
     # this code must be run outside, or the window might crash
-    windows.forEach (wnckWindow) -> wnckWindow.unmaximize() # unmaximize to avoid carsh
-    runGjsScript "set-decorations-0", {xids: xids}
+    windows.forEach (wnckWindow) ->
+      runGjsScript "set-decorations-0", {xid: wnckWindow.get_xid()}
 
     # set geometry hints
     # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)

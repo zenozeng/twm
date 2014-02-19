@@ -1,5 +1,16 @@
 Wnck = imports.gi.Wnck
 
+###
+About wnck_screen_force_update ()
+
+Synchronously and immediately updates the list of WnckWindow on screen. This bypasses the standard update mechanism, where the list of WnckWindow is updated in the idle loop.
+
+This is usually a bad idea for both performance and correctness reasons (to get things right, you need to write model-view code that tracks changes, not get a static list of open windows). However, this function can be useful for small applications that just do something and then exit.
+###
+
+###
+Window Manager
+###
 class WindowManager
 
   constructor: ->
@@ -17,12 +28,12 @@ class WindowManager
     screen.connect "window-opened", (wnckScreen, wnckWindow) =>
       @windows.push wnckWindow
       @emit "window-opened", [wnckScreen, wnckWindow]
-    screen.connect "active-window-changed", (wnckScreen, wnckWindow) =>
-      @activeWindow = wnckWindow
-      @emit "active-window-changed", [wnckScreen, wnckWindow]
-    screen.connect "active-workspace-changed", (wnckScreen, wnckWorkspace) =>
-      @activeWorkspace = wnckWorkspace
-      @emit "active-workspace-changed", [wnckScreen, wnckWorkspace]
+    screen.connect "active-window-changed", (wnckScreen, prevWnckWindow) =>
+      @activeWindow = screen.get_active_window()
+      @emit "active-window-changed", [wnckScreen, prevWnckWindow]
+    screen.connect "active-workspace-changed", (wnckScreen, prevWnckWorkspace) =>
+      @activeWorkspace = screen.get_active_workspace()
+      @emit "active-workspace-changed", [wnckScreen, prevWnckWorkspace]
 
     @events = {}
 

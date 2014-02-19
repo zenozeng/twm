@@ -5,6 +5,9 @@ Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 Gdk = imports.gi.Gdk
 GLib = imports.gi.GLib
+WindowManager = Extension.imports.lib.windowManager.WindowManager
+
+wm = new WindowManager
 
 runGjsScript = (scriptName, args, callback) ->
   gjsDir = Extension.dir.get_path().toString() + '/gjs/'
@@ -63,12 +66,7 @@ class LayoutManager
   ###
   Get Layout of current workspace
   ###
-  current: ->
-    screen = Wnck.Screen.get_default()
-    screen.force_update()
-    windows = screen.get_windows()
-    currentWorkspace = screen.get_active_workspace()
-    @layoutOfWorkspace[currentWorkspace.get_name()]
+  current: -> @layoutOfWorkspace[wm.getActiveWorkspace().get_name()]
 
   ###
   Apply Float Layout

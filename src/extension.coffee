@@ -3,6 +3,7 @@ Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 keybindings = Extension.imports.lib.keybindings
 ConfigManager = Extension.imports.config.configManager.ConfigManager
+WindowManager = Extension.imports.lib.windowManager.WindowManager
 Wnck = imports.gi.Wnck
 
 init = ->
@@ -20,22 +21,21 @@ init = ->
       keybindings.add keybinding, callback
     keybindings.apply()
 
-    # fire onStartup Hook
-    config.onStartup?()
-
     # bind on window change events
+    wm = new WindowManager
     onWindowChange = (wnckScreen, wnckWindow) ->
-      wnckScreen.force_update()
-      currentWorkspace = wnckScreen.get_active_workspace()
+      currentWorkspace = wm.getActiveWorkspace()
       if wnckWindow.is_visible_on_workspace currentWorkspace
         if config.windowsFilter(wnckWindow)
           currentLayout = config.layouts.current()
           if currentLayout? and currentLayout isnt 'float'
             config.layouts.apply currentLayout, config.windowsFilter
       false
-    screen = Wnck.Screen.get_default()
-    screen.connect "window-opened", onWindowChange
-    screen.connect "window-closed", onWindowChange
+    wm.connect "window-opened", onWindowChange
+    wm.connect "window-closed", onWindowChange
+
+    # fire onStartup Hook
+    config.onStartup?()
 
   catch e
     global.log e

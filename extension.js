@@ -22,6 +22,8 @@ init = function() {
   };
   try {
     config = new ConfigManager;
+    helper.spawn("gsettings set org.gnome.shell.overrides dynamic-workspaces false");
+    helper.spawn("gsettings set org.gnome.desktop.wm.preferences num-workspaces " + config.workspaceNum);
     _ref = config.keybindings;
     for (keybinding in _ref) {
       callback = _ref[keybinding];

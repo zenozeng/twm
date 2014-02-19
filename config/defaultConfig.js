@@ -41,5 +41,6 @@ config = {
   layouts: layouts,
   windowsFilter: function(wnckWindow) {
     return true;
-  }
+  },
+  workspaceNum: 8
 };

@@ -16,6 +16,11 @@ init = ->
     # load config
     config = new ConfigManager
 
+    # set up workspace
+    helper.spawn "gsettings set org.gnome.shell.overrides dynamic-workspaces false"
+    helper.spawn "gsettings set org.gnome.desktop.wm.preferences num-workspaces #{config.workspaceNum}"
+
+
     # apply keybindings from config
     for keybinding, callback of config.keybindings
       keybindings.add keybinding, callback

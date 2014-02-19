@@ -21,3 +21,5 @@ config =
   layouts: layouts
 
   windowsFilter: (wnckWindow) -> true
+
+  workspaceNum: 8

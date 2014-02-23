@@ -27,24 +27,9 @@ init = ->
     keybindings.apply()
 
     # bind on window change events
-    wm = new WindowManager
-    onWindowChange = (wnckWindow, activeWindow) ->
-      currentWorkspace = wm.getActiveWorkspace()
-      if wnckWindow.is_visible_on_workspace currentWorkspace
-        if config.windowsFilter(wnckWindow)
-          currentLayout = config.layouts.current()
-          if currentLayout? and currentLayout isnt 'float'
-            config.layouts.apply currentLayout, config.windowsFilter, activeWindow
-      false
-    wm.connect "window-opened", (wnckScreen, wnckWindow) ->
-      onWindowChange wnckWindow, wnckWindow
-    wm.connect "window-closed", (wnckScreen, wnckWindow) ->
-      onWindowChange wnckWindow, null
+    config.layouts.init()
 
-    # fire onStartup Hook
     config.onStartup?()
-
-    global.t0 = -> config.layouts.apply "3-column"
 
   catch e
     global.log e

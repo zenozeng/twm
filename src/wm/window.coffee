@@ -9,6 +9,22 @@ class Window
   constructor: (@wnckWindow) ->
 
   ###
+  Wait until @wnckWindow no longer change its size
+  ###
+  waitUntilReady: (callback) ->
+    last = null
+    lastButOne = null
+    fn = =>
+      current = JSON.stringify(@wnckWindow.get_geometry())
+      if current is last and last is lastButOne
+        callback?()
+      else
+        last = lastButOne
+        lastButOne = current
+        delay 20, fn
+    fn()
+
+  ###
   Return true if type of @wnckWindow is WNCK_WINDOW_NORMAL
   ###
   isNormalWindow: ->
@@ -21,6 +37,7 @@ class Window
   ###
   removeDecorations: ->
     xid = @wnckWindow.get_xid()
+    @wnckWindow.unmaximize()
     runGjsScript "set-decorations-0", {xid: xid}
 
   ###
@@ -31,6 +48,7 @@ class Window
   ###
   setGeometryHints: ->
     xid = @wnckWindow.get_xid()
+    @wnckWindow.unmaximize()
     runGjsScript "set-geometry-hints", {xid: xid}
 
   setGeometry: (geometry, callback)->
@@ -40,6 +58,8 @@ class Window
     {x, y, width, height} = geometry
     target = [x, y, width, height]
     target = target.map (arg) -> Math.round arg
+    @removeDecorations()
+    @setGeometryHints()
 
     realSetGeometry = (wnckWindow, geometryArr, maxRetry = 50) ->
 
@@ -97,4 +117,5 @@ class Window
               null
       apply()
 
-    realSetGeometry @wnckWindow, target
+    @waitUntilReady =>
+      realSetGeometry @wnckWindow, target

@@ -16,7 +16,7 @@ WindowManager = Extension.imports.lib.windowManager.WindowManager;
 Wnck = imports.gi.Wnck;
 
 init = function() {
-  var callback, config, e, keybinding, onWindowChange, wm, _ref;
+  var callback, config, e, keybinding, _ref;
   global.twm = {
     functions: {}
   };
@@ -30,32 +30,10 @@ init = function() {
       keybindings.add(keybinding, callback);
     }
     keybindings.apply();
-    wm = new WindowManager;
-    onWindowChange = function(wnckWindow, activeWindow) {
-      var currentLayout, currentWorkspace;
-      currentWorkspace = wm.getActiveWorkspace();
-      if (wnckWindow.is_visible_on_workspace(currentWorkspace)) {
-        if (config.windowsFilter(wnckWindow)) {
-          currentLayout = config.layouts.current();
-          if ((currentLayout != null) && currentLayout !== 'float') {
-            config.layouts.apply(currentLayout, config.windowsFilter, activeWindow);
-          }
-        }
-      }
-      return false;
-    };
-    wm.connect("window-opened", function(wnckScreen, wnckWindow) {
-      return onWindowChange(wnckWindow, wnckWindow);
-    });
-    wm.connect("window-closed", function(wnckScreen, wnckWindow) {
-      return onWindowChange(wnckWindow, null);
-    });
+    config.layouts.init();
     if (typeof config.onStartup === "function") {
       config.onStartup();
     }
-    global.t0 = function() {
-      return config.layouts.apply("3-column");
-    };
   } catch (_error) {
     e = _error;
     global.log(e);

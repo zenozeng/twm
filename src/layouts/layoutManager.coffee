@@ -16,6 +16,31 @@ class LayoutManager
     @layouts = {}
     @layoutOfWorkspace = {}
 
+  reapply: (shouldFocus) ->
+    currentLayout = @current()
+    if currentLayout? and currentLayout isnt 'float'
+      @apply currentLayout, shouldFocus
+
+  init: ->
+    wm.connect "window-opened", (wnckScreen, wnckWindow) =>
+      currentWorkspace = wm.getActiveWorkspace()
+      if wnckWindow.is_visible_on_workspace currentWorkspace
+        @reapply(wnckWindow)
+
+    wm.connect "window-closed", (wnckScreen, wnckWindow) =>
+      currentWorkspace = wm.getActiveWorkspace()
+      if wnckWindow.is_visible_on_workspace currentWorkspace
+        @reapply()
+      null
+
+    # some window may change size when focused
+    # so reapply
+    wm.connect "active-window-changed", => @reapply()
+
+  # filter fn
+  filter: (window) ->
+    true
+
   ###
   Get Layout Func
 
@@ -50,9 +75,22 @@ class LayoutManager
     layouts
 
   ###
+  @private
+  ###
+  layoutKeygen: ->
+    monitor = Main.layoutManager.currentMonitor
+    primaryMonitor = Main.layoutManager.primaryMonitor
+    if monitor is primaryMonitor
+      wm.getActiveWorkspace().get_name()
+    else
+      "Monitor:(#{monitor.x}, #{monitor.y})"
+
+  ###
   Get Layout of current workspace
   ###
-  current: -> @layoutOfWorkspace[wm.getActiveWorkspace().get_name()]
+  current: ->
+    global.log JSON.stringify(@layoutOfWorkspace)
+    @layoutOfWorkspace[@layoutKeygen()]
 
   ###
   Apply Float Layout
@@ -77,18 +115,33 @@ class LayoutManager
   @param [String] layoutName Layout Name
   @param [Function] filter Filter function which takes WnckWindow as param and returns false this window should be ignored
   ###
-  apply: (layoutName, filter, activeWindow = wm.getActiveWindow()) ->
+  apply: (layoutName, activeWindow = wm.getActiveWindow()) ->
 
     windows = wm.getWindows()
     currentWorkspace = wm.getActiveWorkspace()
 
-    @layoutOfWorkspace[currentWorkspace.get_name()] = layoutName
+    @layoutOfWorkspace[@layoutKeygen()] = layoutName
+
+    global.layouts = @layoutOfWorkspace
 
     windows = windows.filter (wnckWindow) ->
       # This will also checks if window is not minimized or shaded
       wnckWindow.is_visible_on_workspace(currentWorkspace)
 
-    windows = windows.filter filter if filter?
+    monitor = Main.layoutManager.currentMonitor
+
+    # only handle windows in current monitor
+    windows = windows.filter (wnckWindow) ->
+      clientGeometry = wnckWindow.get_client_window_geometry()
+      [x, y, width, height] = clientGeometry
+      x = x + width * 0.5
+      y = y + height * 0.5
+      xMatch = (x >= monitor.x) && (x < (monitor.width + monitor.x))
+      yMatch = (y >= monitor.y) && (y < (monitor.height + monitor.y))
+      xMatch && yMatch
+
+    windows.forEach (wnckWindow) ->
+      global.log wnckWindow.get_name()
 
     windows = windows.filter (wnckWindow) ->
       _window = new Window(wnckWindow)
@@ -107,9 +160,14 @@ class LayoutManager
         false
 
     # set layout
-    monitor = Main.layoutManager.primaryMonitor
+    primaryMonitor = Main.layoutManager.primaryMonitor
+    panelHeight = Main.panel.actor.height
+
     avaliableWidth = monitor.width
-    avaliableHeight = monitor.height - Main.panel.actor.height
+    avaliableHeight = monitor.height
+
+    if monitor is primaryMonitor
+      avaliableHeight -= panelHeight
 
     layout = @get layoutName
     areas = layout windows.length
@@ -118,17 +176,17 @@ class LayoutManager
 
       windows.forEach (win, index) ->
         {x, y, width, height} = areas[index]
-        x = x * avaliableWidth
-        y = y * avaliableHeight
+        x = x * avaliableWidth + monitor.x
+        y = y * avaliableHeight + monitor.y
+
+        if monitor is primaryMonitor
+          y += panelHeight
+
         width = width * avaliableWidth
         height = height * avaliableHeight
 
-        y += 27
-
         _window = new Window(win)
         geometry = {x: x, y: y, width: width, height: height}
-        _window.removeDecorations()
-        _window.setGeometryHints()
         _window.setGeometry geometry, refocus
 
     updateWindows()

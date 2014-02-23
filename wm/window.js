@@ -18,6 +18,31 @@ Window = (function() {
 
 
   /*
+  Wait until @wnckWindow no longer change its size
+   */
+
+  Window.prototype.waitUntilReady = function(callback) {
+    var fn, last, lastButOne;
+    last = null;
+    lastButOne = null;
+    fn = (function(_this) {
+      return function() {
+        var current;
+        current = JSON.stringify(_this.wnckWindow.get_geometry());
+        if (current === last && last === lastButOne) {
+          return typeof callback === "function" ? callback() : void 0;
+        } else {
+          last = lastButOne;
+          lastButOne = current;
+          return delay(20, fn);
+        }
+      };
+    })(this);
+    return fn();
+  };
+
+
+  /*
   Return true if type of @wnckWindow is WNCK_WINDOW_NORMAL
    */
 
@@ -36,6 +61,7 @@ Window = (function() {
   Window.prototype.removeDecorations = function() {
     var xid;
     xid = this.wnckWindow.get_xid();
+    this.wnckWindow.unmaximize();
     return runGjsScript("set-decorations-0", {
       xid: xid
     });
@@ -52,6 +78,7 @@ Window = (function() {
   Window.prototype.setGeometryHints = function() {
     var xid;
     xid = this.wnckWindow.get_xid();
+    this.wnckWindow.unmaximize();
     return runGjsScript("set-geometry-hints", {
       xid: xid
     });
@@ -65,6 +92,8 @@ Window = (function() {
     target = target.map(function(arg) {
       return Math.round(arg);
     });
+    this.removeDecorations();
+    this.setGeometryHints();
     realSetGeometry = function(wnckWindow, geometryArr, maxRetry) {
       var apply, now, test, _realSetGeometry;
       if (maxRetry == null) {
@@ -130,7 +159,11 @@ Window = (function() {
       };
       return apply();
     };
-    return realSetGeometry(this.wnckWindow, target);
+    return this.waitUntilReady((function(_this) {
+      return function() {
+        return realSetGeometry(_this.wnckWindow, target);
+      };
+    })(this));
   };
 
   return Window;

@@ -25,6 +25,45 @@ LayoutManager = (function() {
     this.layoutOfWorkspace = {};
   }
 
+  LayoutManager.prototype.reapply = function(shouldFocus) {
+    var currentLayout;
+    currentLayout = this.current();
+    if ((currentLayout != null) && currentLayout !== 'float') {
+      return this.apply(currentLayout, shouldFocus);
+    }
+  };
+
+  LayoutManager.prototype.init = function() {
+    wm.connect("window-opened", (function(_this) {
+      return function(wnckScreen, wnckWindow) {
+        var currentWorkspace;
+        currentWorkspace = wm.getActiveWorkspace();
+        if (wnckWindow.is_visible_on_workspace(currentWorkspace)) {
+          return _this.reapply(wnckWindow);
+        }
+      };
+    })(this));
+    wm.connect("window-closed", (function(_this) {
+      return function(wnckScreen, wnckWindow) {
+        var currentWorkspace;
+        currentWorkspace = wm.getActiveWorkspace();
+        if (wnckWindow.is_visible_on_workspace(currentWorkspace)) {
+          _this.reapply();
+        }
+        return null;
+      };
+    })(this));
+    return wm.connect("active-window-changed", (function(_this) {
+      return function() {
+        return _this.reapply();
+      };
+    })(this));
+  };
+
+  LayoutManager.prototype.filter = function(window) {
+    return true;
+  };
+
 
   /*
   Get Layout Func
@@ -79,11 +118,28 @@ LayoutManager = (function() {
 
 
   /*
+  @private
+   */
+
+  LayoutManager.prototype.layoutKeygen = function() {
+    var monitor, primaryMonitor;
+    monitor = Main.layoutManager.currentMonitor;
+    primaryMonitor = Main.layoutManager.primaryMonitor;
+    if (monitor === primaryMonitor) {
+      return wm.getActiveWorkspace().get_name();
+    } else {
+      return "Monitor:(" + monitor.x + ", " + monitor.y + ")";
+    }
+  };
+
+
+  /*
   Get Layout of current workspace
    */
 
   LayoutManager.prototype.current = function() {
-    return this.layoutOfWorkspace[wm.getActiveWorkspace().get_name()];
+    global.log(JSON.stringify(this.layoutOfWorkspace));
+    return this.layoutOfWorkspace[this.layoutKeygen()];
   };
 
 
@@ -119,20 +175,32 @@ LayoutManager = (function() {
   @param [Function] filter Filter function which takes WnckWindow as param and returns false this window should be ignored
    */
 
-  LayoutManager.prototype.apply = function(layoutName, filter, activeWindow) {
-    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, refocus, updateWindows, windows, xids;
+  LayoutManager.prototype.apply = function(layoutName, activeWindow) {
+    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, panelHeight, primaryMonitor, refocus, updateWindows, windows, xids;
     if (activeWindow == null) {
       activeWindow = wm.getActiveWindow();
     }
     windows = wm.getWindows();
     currentWorkspace = wm.getActiveWorkspace();
-    this.layoutOfWorkspace[currentWorkspace.get_name()] = layoutName;
+    this.layoutOfWorkspace[this.layoutKeygen()] = layoutName;
+    global.layouts = this.layoutOfWorkspace;
     windows = windows.filter(function(wnckWindow) {
       return wnckWindow.is_visible_on_workspace(currentWorkspace);
     });
-    if (filter != null) {
-      windows = windows.filter(filter);
-    }
+    monitor = Main.layoutManager.currentMonitor;
+    windows = windows.filter(function(wnckWindow) {
+      var clientGeometry, height, width, x, xMatch, y, yMatch;
+      clientGeometry = wnckWindow.get_client_window_geometry();
+      x = clientGeometry[0], y = clientGeometry[1], width = clientGeometry[2], height = clientGeometry[3];
+      x = x + width * 0.5;
+      y = y + height * 0.5;
+      xMatch = (x >= monitor.x) && (x < (monitor.width + monitor.x));
+      yMatch = (y >= monitor.y) && (y < (monitor.height + monitor.y));
+      return xMatch && yMatch;
+    });
+    windows.forEach(function(wnckWindow) {
+      return global.log(wnckWindow.get_name());
+    });
     windows = windows.filter(function(wnckWindow) {
       var _window;
       _window = new Window(wnckWindow);
@@ -152,9 +220,13 @@ LayoutManager = (function() {
         return false;
       }
     };
-    monitor = Main.layoutManager.primaryMonitor;
+    primaryMonitor = Main.layoutManager.primaryMonitor;
+    panelHeight = Main.panel.actor.height;
     avaliableWidth = monitor.width;
-    avaliableHeight = monitor.height - Main.panel.actor.height;
+    avaliableHeight = monitor.height;
+    if (monitor === primaryMonitor) {
+      avaliableHeight -= panelHeight;
+    }
     layout = this.get(layoutName);
     areas = layout(windows.length);
     updateWindows = (function(_this) {
@@ -162,11 +234,13 @@ LayoutManager = (function() {
         return windows.forEach(function(win, index) {
           var geometry, height, width, x, y, _ref, _window;
           _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
-          x = x * avaliableWidth;
-          y = y * avaliableHeight;
+          x = x * avaliableWidth + monitor.x;
+          y = y * avaliableHeight + monitor.y;
+          if (monitor === primaryMonitor) {
+            y += panelHeight;
+          }
           width = width * avaliableWidth;
           height = height * avaliableHeight;
-          y += 27;
           _window = new Window(win);
           geometry = {
             x: x,
@@ -174,8 +248,6 @@ LayoutManager = (function() {
             width: width,
             height: height
           };
-          _window.removeDecorations();
-          _window.setGeometryHints();
           return _window.setGeometry(geometry, refocus);
         });
       };

@@ -33,10 +33,6 @@ class LayoutManager
         @reapply()
       null
 
-    # some window may change size when focused
-    # so reapply
-    wm.connect "active-window-changed", => @reapply()
-
   # filter fn
   filter: (window) ->
     true
@@ -172,10 +168,17 @@ class LayoutManager
     layout = @get layoutName
     areas = layout windows.length
 
-    updateWindows = =>
+    activeWindowInfo = null
+
+    todo = areas.length
+
+    updateWindows = (callback) =>
+
 
       windows.forEach (win, index) ->
+
         {x, y, width, height} = areas[index]
+
         x = x * avaliableWidth + monitor.x
         y = y * avaliableHeight + monitor.y
 
@@ -187,6 +190,18 @@ class LayoutManager
 
         _window = new Window(win)
         geometry = {x: x, y: y, width: width, height: height}
-        _window.setGeometry geometry, refocus
 
-    updateWindows()
+        if win is activeWindow
+          activeWindowInfo = geometry
+
+        _window.setGeometry geometry, ->
+          todo--
+          if todo is 0
+            callback?()
+
+    updateWindows ->
+      refocus()
+      # some window may change its size when focused
+      # so, reset geometry
+      __window = new Window(activeWindow)
+      __window.setGeometry activeWindowInfo, null, true

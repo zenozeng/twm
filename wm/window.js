@@ -84,16 +84,21 @@ Window = (function() {
     });
   };
 
-  Window.prototype.setGeometry = function(geometry, callback) {
+  Window.prototype.setGeometry = function(geometry, callback, raw) {
     var height, realSetGeometry, target, width, x, y;
+    if (raw == null) {
+      raw = false;
+    }
     this.wnckWindow.unmaximize();
     x = geometry.x, y = geometry.y, width = geometry.width, height = geometry.height;
     target = [x, y, width, height];
     target = target.map(function(arg) {
       return Math.round(arg);
     });
-    this.removeDecorations();
-    this.setGeometryHints();
+    if (!raw) {
+      this.removeDecorations();
+      this.setGeometryHints();
+    }
     realSetGeometry = function(wnckWindow, geometryArr, maxRetry) {
       var apply, now, test, _realSetGeometry;
       if (maxRetry == null) {

@@ -43,7 +43,7 @@ LayoutManager = (function() {
         }
       };
     })(this));
-    wm.connect("window-closed", (function(_this) {
+    return wm.connect("window-closed", (function(_this) {
       return function(wnckScreen, wnckWindow) {
         var currentWorkspace;
         currentWorkspace = wm.getActiveWorkspace();
@@ -51,11 +51,6 @@ LayoutManager = (function() {
           _this.reapply();
         }
         return null;
-      };
-    })(this));
-    return wm.connect("active-window-changed", (function(_this) {
-      return function() {
-        return _this.reapply();
       };
     })(this));
   };
@@ -176,7 +171,7 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.apply = function(layoutName, activeWindow) {
-    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, panelHeight, primaryMonitor, refocus, updateWindows, windows, xids;
+    var activeWindowInfo, areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, panelHeight, primaryMonitor, refocus, todo, updateWindows, windows, xids;
     if (activeWindow == null) {
       activeWindow = wm.getActiveWindow();
     }
@@ -229,8 +224,10 @@ LayoutManager = (function() {
     }
     layout = this.get(layoutName);
     areas = layout(windows.length);
+    activeWindowInfo = null;
+    todo = areas.length;
     updateWindows = (function(_this) {
-      return function() {
+      return function(callback) {
         return windows.forEach(function(win, index) {
           var geometry, height, width, x, y, _ref, _window;
           _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
@@ -248,11 +245,24 @@ LayoutManager = (function() {
             width: width,
             height: height
           };
-          return _window.setGeometry(geometry, refocus);
+          if (win === activeWindow) {
+            activeWindowInfo = geometry;
+          }
+          return _window.setGeometry(geometry, function() {
+            todo--;
+            if (todo === 0) {
+              return typeof callback === "function" ? callback() : void 0;
+            }
+          });
         });
       };
     })(this);
-    return updateWindows();
+    return updateWindows(function() {
+      var __window;
+      refocus();
+      __window = new Window(activeWindow);
+      return __window.setGeometry(activeWindowInfo, null, true);
+    });
   };
 
   return LayoutManager;

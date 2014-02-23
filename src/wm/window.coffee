@@ -51,15 +51,17 @@ class Window
     @wnckWindow.unmaximize()
     runGjsScript "set-geometry-hints", {xid: xid}
 
-  setGeometry: (geometry, callback)->
+  setGeometry: (geometry, callback, raw = false)->
 
     # preprocess
     @wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
     {x, y, width, height} = geometry
     target = [x, y, width, height]
     target = target.map (arg) -> Math.round arg
-    @removeDecorations()
-    @setGeometryHints()
+
+    unless raw
+      @removeDecorations()
+      @setGeometryHints()
 
     realSetGeometry = (wnckWindow, geometryArr, maxRetry = 50) ->
 

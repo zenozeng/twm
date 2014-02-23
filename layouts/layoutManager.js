@@ -133,6 +133,11 @@ LayoutManager = (function() {
     if (filter != null) {
       windows = windows.filter(filter);
     }
+    windows = windows.filter(function(wnckWindow) {
+      var _window;
+      _window = new Window(wnckWindow);
+      return _window.isNormalWindow();
+    });
     if (layoutName === 'float') {
       this.float(windows, activeWindow);
       return null;

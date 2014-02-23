@@ -90,6 +90,10 @@ class LayoutManager
 
     windows = windows.filter filter if filter?
 
+    windows = windows.filter (wnckWindow) ->
+      _window = new Window(wnckWindow)
+      _window.isNormalWindow()
+
     if layoutName is 'float'
       @float windows, activeWindow
       return null

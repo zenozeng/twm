@@ -1,23 +1,35 @@
 ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
+Wnck = imports.gi.Wnck
 {delay, runGjsScript} = helper
 
 class Window
 
   constructor: (@wnckWindow) ->
 
-  # remove title bar
-  # this code must be run outside, or the window might crash
-  removeDecorations: () ->
+  ###
+  Return true if type of @wnckWindow is WNCK_WINDOW_NORMAL
+  ###
+  isNormalWindow: ->
+    type = @wnckWindow.get_window_type()
+    type is Wnck.WindowType.NORMAL
+
+  ###
+  remove title bar
+  @note this gjs must be run outside, or the window might crash
+  ###
+  removeDecorations: ->
     xid = @wnckWindow.get_xid()
     runGjsScript "set-decorations-0", {xid: xid}
 
-  # set geometry hints
-  # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
-  # allow setting width & height using px (for Gnome Termianl, Emacs)
-  # this code must be run outside, or the window might crash
-  setGeometryHints: () ->
+  ###
+  set geometry hints
+  Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
+  allow setting width & height using px (for Gnome Termianl, Emacs)
+  @note the gjs must be run outside, or the window might crash
+  ###
+  setGeometryHints: ->
     xid = @wnckWindow.get_xid()
     runGjsScript "set-geometry-hints", {xid: xid}
 

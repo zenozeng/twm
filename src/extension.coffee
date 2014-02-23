@@ -44,6 +44,8 @@ init = ->
     # fire onStartup Hook
     config.onStartup?()
 
+    global.t0 = -> config.layouts.apply "3-column"
+
   catch e
     global.log e
     helper.log e

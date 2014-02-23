@@ -14,6 +14,12 @@ Window Manager
 class WindowManager
 
   constructor: ->
+    # 单例模式
+    if(WindowManager.instance?)
+      return WindowManager.instance
+    WindowManager.instance = this
+
+
     @screen = Wnck.Screen.get_default()
     @forceUpdate()
 
@@ -36,6 +42,8 @@ class WindowManager
       @emit "active-workspace-changed", [wnckScreen, prevWnckWorkspace]
 
     @events = {}
+
+    return this
 
   forceUpdate: -> @screen.force_update()
 

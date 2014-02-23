@@ -53,6 +53,9 @@ init = function() {
     if (typeof config.onStartup === "function") {
       config.onStartup();
     }
+    global.t0 = function() {
+      return config.layouts.apply("3-column");
+    };
   } catch (_error) {
     e = _error;
     global.log(e);

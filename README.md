@@ -78,6 +78,8 @@ WM_NORMAL_HINTS(WM_SIZE_HINTS):
 
 - 靠谱的获取 XID 方式: `wnckWindow.get_xid()`
 
+- Requires only GTK
+
 ## Doc
 
 I am using Coffee Script & using [codo](https://github.com/coffeedoc/codo) as documentation generator.

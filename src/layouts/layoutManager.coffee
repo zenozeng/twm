@@ -3,24 +3,12 @@ Wnck = imports.gi.Wnck
 ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
-WindowManager = Extension.imports.lib.windowManager.WindowManager
+WindowManager = Extension.imports.wm.windowManager.WindowManager
+Window = Extension.imports.wm.window.Window
 
 wm = new WindowManager
 
-runGjsScript = (scriptName, args, callback) ->
-  gjsDir = Extension.dir.get_path().toString() + '/gjs/'
-  args = JSON.stringify args
-  timestamp = (new Date()).getTime()
-  gjs = "imports[\"#{scriptName}\"].main(#{args});//#{timestamp}"
-  cmd = "gjs -c '#{gjs}' -I #{gjsDir}"
-  spawn cmd
-
-  gc = ->
-    spawn "sh -c \"ps -ef | grep #{gjsDir} | grep #{timestamp} | awk '{print $2}' | xargs kill -9\""
-    callback?()
-  delay 1000, gc
-
-{spawn, spawnSync, delay} = helper
+{spawn, spawnSync, delay, runGjsScript} = helper
 
 class LayoutManager
 
@@ -94,8 +82,6 @@ class LayoutManager
     windows = wm.getWindows()
     currentWorkspace = wm.getActiveWorkspace()
 
-    global.log activeWindow.get_name()
-
     @layoutOfWorkspace[currentWorkspace.get_name()] = layoutName
 
     windows = windows.filter (wnckWindow) ->
@@ -110,18 +96,6 @@ class LayoutManager
 
     xids = windows.map (wnckWindow) -> wnckWindow.get_xid()
 
-    # remove title bar
-    # this code must be run outside, or the window might crash
-    windows.forEach (wnckWindow) ->
-      runGjsScript "set-decorations-0", {xid: wnckWindow.get_xid()}
-
-    # set geometry hints
-    # Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
-    # allow setting width & height using px (for Gnome Termianl, Emacs)
-    # this code must be run outside, or the window might crash
-    runGjsScript "set-geometry-hints", {xids: xids}
-
-    # get current active window
     refocus = ->
       if activeWindow?
         activeWindow.activate(helper.getXServerTimestamp())
@@ -136,14 +110,7 @@ class LayoutManager
     layout = @get layoutName
     areas = layout windows.length
 
-    setGeometry = (wnckWindow, geometry) ->
-      wnckWindow.activate(helper.getXServerTimestamp()) # avoid last_focus_time (9747565) is greater than comparison timestamp message
-      wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
-      geometry = geometry.map (elem) -> Math.round elem
-      [x, y, width, height] = geometry
-      wnckWindow.set_geometry 0, 15, x, y, width, height
-
-    updateWindows = ->
+    updateWindows = =>
 
       windows.forEach (win, index) ->
         {x, y, width, height} = areas[index]
@@ -152,18 +119,12 @@ class LayoutManager
         width = width * avaliableWidth
         height = height * avaliableHeight
 
-        clientWindowGeometry = win.get_client_window_geometry()
-        windowGeometry = win.get_geometry()
-        widthOffset = windowGeometry[2] - clientWindowGeometry[2]
-        heightOffset = windowGeometry[3] - clientWindowGeometry[3]
+        y += 27
 
-        y -= 3 # border-radius of panel
-
-        target = [x, y, width + widthOffset, height + heightOffset]
-        setGeometry win, target
-
-      refocus()
+        _window = new Window(win)
+        geometry = {x: x, y: y, width: width, height: height}
+        _window.removeDecorations()
+        _window.setGeometryHints()
+        _window.setGeometry geometry
 
     updateWindows()
-    delay 300, updateWindows
-    delay 600, updateWindows

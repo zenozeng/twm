@@ -57,7 +57,7 @@ Window = (function() {
     });
   };
 
-  Window.prototype.setGeometry = function(geometry) {
+  Window.prototype.setGeometry = function(geometry, callback) {
     var height, realSetGeometry, target, width, x, y;
     this.wnckWindow.unmaximize();
     x = geometry.x, y = geometry.y, width = geometry.width, height = geometry.height;
@@ -112,12 +112,9 @@ Window = (function() {
       };
       now = (new Date()).getTime();
       apply = function() {
-        var time;
-        time = (new Date()).getTime() - now;
-        global.log(time);
         return test(function(hasDone) {
           if (hasDone) {
-            return null;
+            return typeof callback === "function" ? callback() : void 0;
           } else {
             _realSetGeometry(geometryArr);
             maxRetry--;

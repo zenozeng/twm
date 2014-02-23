@@ -176,7 +176,7 @@ LayoutManager = (function() {
           };
           _window.removeDecorations();
           _window.setGeometryHints();
-          return _window.setGeometry(geometry);
+          return _window.setGeometry(geometry, refocus);
         });
       };
     })(this);

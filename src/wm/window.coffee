@@ -33,7 +33,7 @@ class Window
     xid = @wnckWindow.get_xid()
     runGjsScript "set-geometry-hints", {xid: xid}
 
-  setGeometry: (geometry)->
+  setGeometry: (geometry, callback)->
 
     # preprocess
     @wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
@@ -85,12 +85,9 @@ class Window
       now = (new Date()).getTime()
 
       apply = ->
-        time = ((new Date()).getTime() - now)
-        global.log time
-
         test (hasDone) ->
           if hasDone
-            null
+            callback?()
           else
             _realSetGeometry geometryArr
             maxRetry--

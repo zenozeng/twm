@@ -129,6 +129,6 @@ class LayoutManager
         geometry = {x: x, y: y, width: width, height: height}
         _window.removeDecorations()
         _window.setGeometryHints()
-        _window.setGeometry geometry
+        _window.setGeometry geometry, refocus
 
     updateWindows()

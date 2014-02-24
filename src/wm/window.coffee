@@ -2,12 +2,20 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 Wnck = imports.gi.Wnck
+WindowManager = Extension.imports.wm.windowManager.WindowManager
+Main = imports.ui.main
 {delay, runGjsScript} = helper
 
 class Window
 
   constructor: (@wnckWindow) ->
     wm = new WindowManager() # 注意 window manager 是跑在单例模式的
+    wm.storage.windows = {} unless wm.storage.windows?
+    storage = wm.storage.windows[@getId()]
+    @storage =
+      getItem: (key) -> storage[key]
+      setItem: (key, value) -> storage[key] = value
+      clear: -> storage = {}
 
   ###
   Get ID (current xid used)
@@ -15,14 +23,22 @@ class Window
   getId: ->
     @wnckWindow.get_xid()
 
-  getTargetGeometry: ->
-    wm.storage.geometry && wm.storage.geometry[@getId()]
+  getTargetGeometry: -> @storage.getItem 'geometry'
 
-  setTargetGeometry: (geometry) ->
-    wm.storage.geometry = {} unless wm.storage.geometry?
-    wm.storage.geometry[@getId()] = geometry
+  setTargetGeometry: (geometry) -> @storage.setItem 'geometry', geometry
 
+  ###
+  Set window as float
+
+  @note all storage related to this window will be cleared
+  ###
   setFloat: ->
+    @storage.clear()
+    monitor = Main.layoutManager.currentMonitor
+    width = monitor.width * 2 / 3
+    height = monitor.height * 2 / 3
+    @wnckWindow.set_geometry 0, (1 << 2) | (1 << 3), 0, 0, width, height
+    runGjsScript "set-float", {xid: @wnckWindow.get_xid()}
 
   ###
   Wait until @wnckWindow no longer change its size

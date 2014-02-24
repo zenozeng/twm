@@ -145,20 +145,12 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.float = function(wnckWindows, activeWindow) {
-    var activeWindowXid, height, monitor, width, xids;
-    activeWindowXid = activeWindow != null ? activeWindow.get_xid() : null;
-    monitor = Main.layoutManager.primaryMonitor;
-    width = monitor.width * 2 / 3;
-    height = monitor.height * 2 / 3;
-    wnckWindows.forEach(function(wnckWindow) {
-      return wnckWindow.set_geometry(0, (1 << 2) | (1 << 3), 0, 0, width, height);
+    var windows;
+    windows = wnckWindows.map(function(wnckWindow) {
+      return new Window(wnckWindow);
     });
-    xids = wnckWindows.map(function(wnckWindow) {
-      return wnckWindow.get_xid();
-    });
-    return runGjsScript("set-float", {
-      xids: xids,
-      activeWindowXid: activeWindowXid
+    return windows.forEach(function(window) {
+      return window.setFloat();
     });
   };
 

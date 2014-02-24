@@ -59,6 +59,7 @@ WindowManager = (function() {
         return _this.emit("active-workspace-changed", [wnckScreen, prevWnckWorkspace]);
       };
     })(this));
+    this.storage = {};
     this.events = {};
     return this;
   }
@@ -108,6 +109,7 @@ WindowManager = (function() {
     if (!window.isNormalWindow()) {
       return true;
     }
+    return false;
   };
 
   WindowManager.prototype.forceUpdate = function() {

@@ -7,14 +7,11 @@ const GLib = imports.gi.GLib;
 const GdkX11 = imports.gi.GdkX11;
 
 const main = function(args) {
-    let xids = args.xids;
-    let activeWindowXid = args.activeWindowXid;
+    let xid = args.xid;
 
     Gtk.init(null, 0);
 
-    const gdkWindows = xids.map(function(xid) {
-        return GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), xid);
-    });
+    let gdkWindow = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), xid);
 
     const GDK_DECOR_ALL = 1 << 0;
     const GDK_DECOR_BORDER = 1 << 1;
@@ -25,19 +22,11 @@ const main = function(args) {
     const GDK_DECOR_MAXIMIZE = 1 << 6;
 
     // reset decorations
-    gdkWindows.forEach(function(gdkWindow) {
-        let GdkWMDecoration = GDK_DECOR_MENU;
-        gdkWindow.unmaximize();
-        gdkWindow.hide(); // otherwise gnome-shell will freeze
-        gdkWindow.set_decorations(GDK_DECOR_ALL);
-        gdkWindow.show();
-    });
-
-    let activeWindow = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), activeWindowXid);
-
-    // refocus
-    activeWindow.hide();
-    activeWindow.show();
+    let GdkWMDecoration = GDK_DECOR_MENU;
+    gdkWindow.unmaximize();
+    gdkWindow.hide(); // otherwise gnome-shell will freeze
+    gdkWindow.set_decorations(GDK_DECOR_ALL);
+    gdkWindow.show();
 
     Gtk.main();
 }

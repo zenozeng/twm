@@ -14,7 +14,26 @@ delay = helper.delay, runGjsScript = helper.runGjsScript;
 Window = (function() {
   function Window(wnckWindow) {
     this.wnckWindow = wnckWindow;
+    this.wmInstance = {};
+    this.targetGeometry = {};
   }
+
+
+  /*
+  Get ID (current xid used)
+   */
+
+  Window.prototype.getId = function() {
+    return this.wnckWindow.get_xid();
+  };
+
+  Window.prototype.getTargetGeometry = function() {
+    return this.targetGeometry;
+  };
+
+  Window.prototype.setTargetGeometry = function(geometry) {
+    return this.targetGeometry = geometry;
+  };
 
 
   /*

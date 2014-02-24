@@ -1,4 +1,5 @@
 Wnck = imports.gi.Wnck
+GLib = imports.gi.GLib
 
 ###
 About wnck_screen_force_update ()
@@ -18,6 +19,8 @@ class WindowManager
     if(WindowManager.instance?)
       return WindowManager.instance
     WindowManager.instance = this
+
+    global.log "Construct!!!"
 
 
     @screen = Wnck.Screen.get_default()
@@ -41,9 +44,41 @@ class WindowManager
       @activeWorkspace = @screen.get_active_workspace()
       @emit "active-workspace-changed", [wnckScreen, prevWnckWorkspace]
 
+    @storage = {}
     @events = {}
 
     return this
+
+  ###
+  Get all visible windows in current workspace (in all monitors)
+  ###
+  getVisibleWindows: ->
+    windows = @windows.filter (wnckWindow) =>
+      # This will also checks if window is not minimized or shaded
+      wnckWindow.is_visible_on_workspace(@currentWorkspace)
+    windows.map (wnckWindow) -> new Window(wnckWindow)
+
+
+  ###
+  @private
+  ###
+  setGeometryInterval: ->
+    GLib.timeout_add GLib.PRIORITY_DEFAULT, 20, =>
+      visibleWindows = @getVisibleWindows()
+      # check Geometry
+      visibleWindows.forEach (window) ->
+        geometry = window.getTargetGeometry()
+      # nerver destory the interval
+      true
+
+
+  ###
+  Return true if the (Window) window should be ignored
+  ###
+  ignore: (window) ->
+    return true unless window.isNormalWindow()
+    false
+
 
   forceUpdate: -> @screen.force_update()
 

@@ -7,6 +7,22 @@ Wnck = imports.gi.Wnck
 class Window
 
   constructor: (@wnckWindow) ->
+    wm = new WindowManager() # 注意 window manager 是跑在单例模式的
+
+  ###
+  Get ID (current xid used)
+  ###
+  getId: ->
+    @wnckWindow.get_xid()
+
+  getTargetGeometry: ->
+    wm.storage.geometry && wm.storage.geometry[@getId()]
+
+  setTargetGeometry: (geometry) ->
+    wm.storage.geometry = {} unless wm.storage.geometry?
+    wm.storage.geometry[@getId()] = geometry
+
+  setFloat: ->
 
   ###
   Wait until @wnckWindow no longer change its size

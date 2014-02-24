@@ -162,6 +162,10 @@ LayoutManager = (function() {
     });
   };
 
+  LayoutManager.prototype.newapply = function(layoutName, monitor, windows) {
+    return false;
+  };
+
 
   /*
   Apply Layout

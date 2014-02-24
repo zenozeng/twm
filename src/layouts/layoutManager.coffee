@@ -105,6 +105,10 @@ class LayoutManager
     xids = wnckWindows.map (wnckWindow) -> wnckWindow.get_xid()
     runGjsScript "set-float", {xids: xids, activeWindowXid: activeWindowXid}
 
+
+  newapply: (layoutName, monitor, windows) ->
+    false
+
   ###
   Apply Layout
 

@@ -85,7 +85,6 @@ class LayoutManager
   Get Layout of current workspace
   ###
   current: ->
-    global.log JSON.stringify(@layoutOfWorkspace)
     @layoutOfWorkspace[@layoutKeygen()]
 
   ###
@@ -93,7 +92,7 @@ class LayoutManager
 
   @private
   ###
-  float: (wnckWindows, activeWindow) ->
+  float: (wnckWindows) ->
     # get current active window
     # activeWindowXid = if activeWindow? then activeWindow.get_xid() else null
 
@@ -101,23 +100,17 @@ class LayoutManager
     windows.forEach (window) -> window.setFloat()
 
 
-  newapply: (layoutName, monitor, windows) ->
-    false
-
   ###
   Apply Layout
 
   @param [String] layoutName Layout Name
-  @param [Function] filter Filter function which takes WnckWindow as param and returns false this window should be ignored
   ###
-  apply: (layoutName, activeWindow = wm.getActiveWindow()) ->
+  apply: (layoutName) ->
 
     windows = wm.getWindows()
     currentWorkspace = wm.getActiveWorkspace()
 
     @layoutOfWorkspace[@layoutKeygen()] = layoutName
-
-    global.layouts = @layoutOfWorkspace
 
     windows = windows.filter (wnckWindow) ->
       # This will also checks if window is not minimized or shaded
@@ -135,24 +128,13 @@ class LayoutManager
       yMatch = (y >= monitor.y) && (y < (monitor.height + monitor.y))
       xMatch && yMatch
 
-    windows.forEach (wnckWindow) ->
-      global.log wnckWindow.get_name()
-
     windows = windows.filter (wnckWindow) ->
       _window = new Window(wnckWindow)
       _window.isNormalWindow()
 
     if layoutName is 'float'
-      @float windows, activeWindow
+      @float windows
       return null
-
-    xids = windows.map (wnckWindow) -> wnckWindow.get_xid()
-
-    refocus = ->
-      if activeWindow?
-        activeWindow.activate(helper.getXServerTimestamp())
-      else
-        false
 
     # set layout
     primaryMonitor = Main.layoutManager.primaryMonitor
@@ -167,12 +149,7 @@ class LayoutManager
     layout = @get layoutName
     areas = layout windows.length
 
-    activeWindowInfo = null
-
-    todo = areas.length
-
-    updateWindows = (callback) =>
-
+    updateWindows = ->
 
       windows.forEach (win, index) ->
 
@@ -187,20 +164,9 @@ class LayoutManager
         width = width * avaliableWidth
         height = height * avaliableHeight
 
+        [x, y, width, height] = [x, y, width, height].map (elem) -> Math.round(elem)
+
         _window = new Window(win)
-        geometry = {x: x, y: y, width: width, height: height}
+        _window.setTargetGeometry {x: x, y: y, width: width, height: height}
 
-        if win is activeWindow
-          activeWindowInfo = geometry
-
-        _window.setGeometry geometry, ->
-          todo--
-          if todo is 0
-            callback?()
-
-    updateWindows ->
-      refocus()
-      # some window may change its size when focused
-      # so, reset geometry
-      __window = new Window(activeWindow)
-      __window.setGeometry activeWindowInfo, null, true
+    updateWindows()

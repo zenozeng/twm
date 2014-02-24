@@ -1,5 +1,8 @@
 Wnck = imports.gi.Wnck
 GLib = imports.gi.GLib
+ExtensionUtils = imports.misc.extensionUtils
+Extension = ExtensionUtils.getCurrentExtension()
+Window = Extension.imports.wm.window.Window
 
 ###
 About wnck_screen_force_update ()
@@ -19,9 +22,6 @@ class WindowManager
     if(WindowManager.instance?)
       return WindowManager.instance
     WindowManager.instance = this
-
-    global.log "Construct!!!"
-
 
     @screen = Wnck.Screen.get_default()
     @forceUpdate()
@@ -47,6 +47,8 @@ class WindowManager
     @storage = {}
     @events = {}
 
+    @setGeometryInterval()
+
     return this
 
   ###
@@ -55,7 +57,7 @@ class WindowManager
   getVisibleWindows: ->
     windows = @windows.filter (wnckWindow) =>
       # This will also checks if window is not minimized or shaded
-      wnckWindow.is_visible_on_workspace(@currentWorkspace)
+      wnckWindow.is_visible_on_workspace(@getActiveWorkspace())
     windows.map (wnckWindow) -> new Window(wnckWindow)
 
 
@@ -63,11 +65,23 @@ class WindowManager
   @private
   ###
   setGeometryInterval: ->
-    GLib.timeout_add GLib.PRIORITY_DEFAULT, 20, =>
+    GLib.timeout_add GLib.PRIORITY_DEFAULT, 2000, =>
+
       visibleWindows = @getVisibleWindows()
+
       # check Geometry
-      visibleWindows.forEach (window) ->
-        geometry = window.getTargetGeometry()
+      global.log "INTERVAL ========"
+      visibleWindows.forEach (window) =>
+        target = window.getTargetGeometry()
+        geometry = window.getGeometry()
+
+        global.log window.wnckWindow.get_name()
+        global.log "TARGET: #{JSON.stringify(target)}"
+        global.log "CLIENT: #{JSON.stringify(geometry)}"
+
+        if target? and target isnt geometry
+          window.setGeometry target
+
       # nerver destory the interval
       true
 

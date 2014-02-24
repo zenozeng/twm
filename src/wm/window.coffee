@@ -2,20 +2,22 @@ ExtensionUtils = imports.misc.extensionUtils
 Extension = ExtensionUtils.getCurrentExtension()
 helper = Extension.imports.helper
 Wnck = imports.gi.Wnck
-WindowManager = Extension.imports.wm.windowManager.WindowManager
 Main = imports.ui.main
 {delay, runGjsScript} = helper
 
 class Window
 
   constructor: (@wnckWindow) ->
-    wm = new WindowManager() # 注意 window manager 是跑在单例模式的
-    wm.storage.windows = {} unless wm.storage.windows?
-    storage = wm.storage.windows[@getId()]
+    global.twm.storage.windows = {} unless global.twm.storage.windows?
+    global.twm.storage.windows[@getId()] = {} unless global.twm.storage.windows[@getId()]?
+    storage = global.twm.storage.windows[@getId()]
     @storage =
       getItem: (key) -> storage[key]
       setItem: (key, value) -> storage[key] = value
-      clear: -> storage = {}
+      clear: =>
+        # note that when use `storage = {}`
+        # `storage` is no longer global.twm.storage.windows[@getId()]
+        global.twm.storage.windows[@getId()] = {}
 
   ###
   Get ID (current xid used)
@@ -23,8 +25,21 @@ class Window
   getId: ->
     @wnckWindow.get_xid()
 
+  ###
+  Return client geometry
+  ###
+  getGeometry: ->
+    [x, y, width, height] = @wnckWindow.get_client_window_geometry()
+    {x: x, y: y, width: width, height: height}
+
   getTargetGeometry: -> @storage.getItem 'geometry'
 
+  ###
+  Set target geometry
+
+  @example
+    window.setTargetGeometry({x: x, y: y, width: width, height: height});
+  ###
   setTargetGeometry: (geometry) -> @storage.setItem 'geometry', geometry
 
   ###
@@ -41,22 +56,6 @@ class Window
     runGjsScript "set-float", {xid: @wnckWindow.get_xid()}
 
   ###
-  Wait until @wnckWindow no longer change its size
-  ###
-  waitUntilReady: (callback) ->
-    last = null
-    lastButOne = null
-    fn = =>
-      current = JSON.stringify(@wnckWindow.get_geometry())
-      if current is last and last is lastButOne
-        callback?()
-      else
-        last = lastButOne
-        lastButOne = current
-        delay 20, fn
-    fn()
-
-  ###
   Return true if type of @wnckWindow is WNCK_WINDOW_NORMAL
   ###
   isNormalWindow: ->
@@ -68,6 +67,9 @@ class Window
   @note this gjs must be run outside, or the window might crash
   ###
   removeDecorations: ->
+    if @storage.getItem('decorations') is false
+      return false
+    @storage.setItem 'decorations', false
     xid = @wnckWindow.get_xid()
     @wnckWindow.unmaximize()
     runGjsScript "set-decorations-0", {xid: xid}
@@ -79,77 +81,35 @@ class Window
   @note the gjs must be run outside, or the window might crash
   ###
   setGeometryHints: ->
+    if @storage.getItem('geometry-hints') is 'none'
+      return false
+    @storage.setItem 'geometry-hints', 'none'
     xid = @wnckWindow.get_xid()
     @wnckWindow.unmaximize()
     runGjsScript "set-geometry-hints", {xid: xid}
 
-  setGeometry: (geometry, callback, raw = false)->
+  ###
+  geometry = {x: int, y: int, width: int, height: int}
+  ###
+  setGeometry: (geometry)->
 
-    # preprocess
     @wnckWindow.unmaximize() # unmaximize first, or will fail to set geometry
     {x, y, width, height} = geometry
     target = [x, y, width, height]
-    target = target.map (arg) -> Math.round arg
 
-    unless raw
-      @removeDecorations()
-      @setGeometryHints()
+    @removeDecorations()
+    @setGeometryHints()
 
-    realSetGeometry = (wnckWindow, geometryArr, maxRetry = 50) ->
+    clientGeometry = @wnckWindow.get_client_window_geometry()
+    windowGeometry = @wnckWindow.get_geometry()
 
-      _realSetGeometry = (geometryArr) ->
+    newTarget = []
+    for index in [0..3]
+      offset = target[index] - clientGeometry[index]
+      newTarget[index] = offset + windowGeometry[index]
+    [x, y, width, height] = newTarget
 
-        clientGeometry = wnckWindow.get_client_window_geometry()
-        windowGeometry = wnckWindow.get_geometry()
-
-        newTarget = []
-        for index in [0..3]
-          offset = geometryArr[index] - clientGeometry[index]
-          newTarget[index] = offset + windowGeometry[index]
-        [x, y, width, height] = newTarget
-
-        WnckWindowMoveResizeMask = 15
-        # use the left top corner of the client window as gravity point
-        WNCK_WINDOW_GRAVITY_STATIC = 10
-        wnckWindow.set_geometry WNCK_WINDOW_GRAVITY_STATIC, WnckWindowMoveResizeMask, x, y, width, height
-
-      # callback will be called with an bool arg indicate whether geometry is matched
-      test = (callback) ->
-
-        # return true if geometry matched
-        check = ->
-          clientGeometry = wnckWindow.get_client_window_geometry()
-          windowGeometry = wnckWindow.get_geometry()
-          JSON.stringify(geometryArr) is JSON.stringify(clientGeometry)
-
-        if check()
-          # recheck needed
-          delay 50, ->
-            if check()
-              delay 50, ->
-                if check()
-                  callback?(true)
-                else
-                  callback?(false)
-            else
-              callback?(false)
-        else
-          callback?(false)
-
-      now = (new Date()).getTime()
-
-      apply = ->
-        test (hasDone) ->
-          if hasDone
-            callback?()
-          else
-            _realSetGeometry geometryArr
-            maxRetry--
-            if maxRetry > 0
-              delay 20, -> apply()
-            else
-              null
-      apply()
-
-    @waitUntilReady =>
-      realSetGeometry @wnckWindow, target
+    WnckWindowMoveResizeMask = 15
+    # use the left top corner of the client window as gravity point
+    WNCK_WINDOW_GRAVITY_STATIC = 10
+    @wnckWindow.set_geometry WNCK_WINDOW_GRAVITY_STATIC, WnckWindowMoveResizeMask, x, y, width, height

@@ -11,6 +11,9 @@ init = ->
   # init global variable for functions to call from outside
   global.twm = {functions: {}}
 
+  # init storage
+  global.twm.storage = {}
+
   try
 
     # load config

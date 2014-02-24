@@ -20,6 +20,7 @@ init = function() {
   global.twm = {
     functions: {}
   };
+  global.twm.storage = {};
   try {
     config = new ConfigManager;
     helper.spawn("gsettings set org.gnome.shell.overrides dynamic-workspaces false");

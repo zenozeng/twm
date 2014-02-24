@@ -133,7 +133,6 @@ LayoutManager = (function() {
    */
 
   LayoutManager.prototype.current = function() {
-    global.log(JSON.stringify(this.layoutOfWorkspace));
     return this.layoutOfWorkspace[this.layoutKeygen()];
   };
 
@@ -144,7 +143,7 @@ LayoutManager = (function() {
   @private
    */
 
-  LayoutManager.prototype.float = function(wnckWindows, activeWindow) {
+  LayoutManager.prototype.float = function(wnckWindows) {
     var windows;
     windows = wnckWindows.map(function(wnckWindow) {
       return new Window(wnckWindow);
@@ -154,27 +153,18 @@ LayoutManager = (function() {
     });
   };
 
-  LayoutManager.prototype.newapply = function(layoutName, monitor, windows) {
-    return false;
-  };
-
 
   /*
   Apply Layout
   
   @param [String] layoutName Layout Name
-  @param [Function] filter Filter function which takes WnckWindow as param and returns false this window should be ignored
    */
 
-  LayoutManager.prototype.apply = function(layoutName, activeWindow) {
-    var activeWindowInfo, areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, panelHeight, primaryMonitor, refocus, todo, updateWindows, windows, xids;
-    if (activeWindow == null) {
-      activeWindow = wm.getActiveWindow();
-    }
+  LayoutManager.prototype.apply = function(layoutName) {
+    var areas, avaliableHeight, avaliableWidth, currentWorkspace, layout, monitor, panelHeight, primaryMonitor, updateWindows, windows;
     windows = wm.getWindows();
     currentWorkspace = wm.getActiveWorkspace();
     this.layoutOfWorkspace[this.layoutKeygen()] = layoutName;
-    global.layouts = this.layoutOfWorkspace;
     windows = windows.filter(function(wnckWindow) {
       return wnckWindow.is_visible_on_workspace(currentWorkspace);
     });
@@ -189,28 +179,15 @@ LayoutManager = (function() {
       yMatch = (y >= monitor.y) && (y < (monitor.height + monitor.y));
       return xMatch && yMatch;
     });
-    windows.forEach(function(wnckWindow) {
-      return global.log(wnckWindow.get_name());
-    });
     windows = windows.filter(function(wnckWindow) {
       var _window;
       _window = new Window(wnckWindow);
       return _window.isNormalWindow();
     });
     if (layoutName === 'float') {
-      this.float(windows, activeWindow);
+      this.float(windows);
       return null;
     }
-    xids = windows.map(function(wnckWindow) {
-      return wnckWindow.get_xid();
-    });
-    refocus = function() {
-      if (activeWindow != null) {
-        return activeWindow.activate(helper.getXServerTimestamp());
-      } else {
-        return false;
-      }
-    };
     primaryMonitor = Main.layoutManager.primaryMonitor;
     panelHeight = Main.panel.actor.height;
     avaliableWidth = monitor.width;
@@ -220,45 +197,30 @@ LayoutManager = (function() {
     }
     layout = this.get(layoutName);
     areas = layout(windows.length);
-    activeWindowInfo = null;
-    todo = areas.length;
-    updateWindows = (function(_this) {
-      return function(callback) {
-        return windows.forEach(function(win, index) {
-          var geometry, height, width, x, y, _ref, _window;
-          _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
-          x = x * avaliableWidth + monitor.x;
-          y = y * avaliableHeight + monitor.y;
-          if (monitor === primaryMonitor) {
-            y += panelHeight;
-          }
-          width = width * avaliableWidth;
-          height = height * avaliableHeight;
-          _window = new Window(win);
-          geometry = {
-            x: x,
-            y: y,
-            width: width,
-            height: height
-          };
-          if (win === activeWindow) {
-            activeWindowInfo = geometry;
-          }
-          return _window.setGeometry(geometry, function() {
-            todo--;
-            if (todo === 0) {
-              return typeof callback === "function" ? callback() : void 0;
-            }
-          });
+    updateWindows = function() {
+      return windows.forEach(function(win, index) {
+        var height, width, x, y, _ref, _ref1, _window;
+        _ref = areas[index], x = _ref.x, y = _ref.y, width = _ref.width, height = _ref.height;
+        x = x * avaliableWidth + monitor.x;
+        y = y * avaliableHeight + monitor.y;
+        if (monitor === primaryMonitor) {
+          y += panelHeight;
+        }
+        width = width * avaliableWidth;
+        height = height * avaliableHeight;
+        _ref1 = [x, y, width, height].map(function(elem) {
+          return Math.round(elem);
+        }), x = _ref1[0], y = _ref1[1], width = _ref1[2], height = _ref1[3];
+        _window = new Window(win);
+        return _window.setTargetGeometry({
+          x: x,
+          y: y,
+          width: width,
+          height: height
         });
-      };
-    })(this);
-    return updateWindows(function() {
-      var __window;
-      refocus();
-      __window = new Window(activeWindow);
-      return __window.setGeometry(activeWindowInfo, null, true);
-    });
+      });
+    };
+    return updateWindows();
   };
 
   return LayoutManager;

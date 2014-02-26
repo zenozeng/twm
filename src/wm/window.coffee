@@ -81,11 +81,7 @@ class Window
   @note the gjs must be run outside, or the window might crash
   ###
   setGeometryHints: ->
-    if @storage.getItem('geometry-hints') is 'none'
-      return false
-    @storage.setItem 'geometry-hints', 'none'
     xid = @wnckWindow.get_xid()
-    @wnckWindow.unmaximize()
     runGjsScript "set-geometry-hints", {xid: xid}
 
   ###

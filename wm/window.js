@@ -139,12 +139,7 @@ Window = (function() {
 
   Window.prototype.setGeometryHints = function() {
     var xid;
-    if (this.storage.getItem('geometry-hints') === 'none') {
-      return false;
-    }
-    this.storage.setItem('geometry-hints', 'none');
     xid = this.wnckWindow.get_xid();
-    this.wnckWindow.unmaximize();
     return runGjsScript("set-geometry-hints", {
       xid: xid
     });

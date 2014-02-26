@@ -66,19 +66,14 @@ class WindowManager
   @private
   ###
   setGeometryInterval: ->
-    GLib.timeout_add GLib.PRIORITY_DEFAULT, 2000, =>
+    GLib.timeout_add GLib.PRIORITY_DEFAULT, 20, =>
 
       visibleWindows = @getVisibleWindows()
 
       # check Geometry
-      global.log "INTERVAL ========"
       visibleWindows.forEach (window) =>
         target = window.getTargetGeometry()
         geometry = window.getGeometry()
-
-        global.log window.wnckWindow.get_name()
-        global.log "TARGET: #{JSON.stringify(target)}"
-        global.log "CLIENT: #{JSON.stringify(geometry)}"
 
         if target? and target isnt geometry
           window.setGeometry target

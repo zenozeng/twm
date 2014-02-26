@@ -23,3 +23,5 @@ config =
   windowsFilter: (wnckWindow) -> true
 
   workspaceNum: 8
+
+  gjsServerPort: 56780

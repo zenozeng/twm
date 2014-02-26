@@ -5,15 +5,25 @@ class ScriptManager
 
   constructor: ->
 
+    # 单例模式
     if ScriptManager.instance?
       return ScriptManager.instance
     ScriptManager.instance = this
+
+    # Connect to Gjs Server
+    # Create one if not exists
+
+    @runningScripts = {}
     return this
 
-  run: (scriptName, args, callback) ->
-    scriptId = (new Date()).getTime() + scriptName
+  call: (scriptName, args, callback) ->
+    scriptId = scriptName + JSON.stringify(args)
+    unless @runningScripts[scriptId]
+      @runningScripts[scriptId] = {uuid: uuid, callback: callback}
+      uuid = (new Date()).getTime() + scriptName
 
   gc: (scriptId) ->
-    spawn "sh -c \"ps -ef | grep #{gjsDir} | grep #{timestamp} | awk '{print $2}' | xargs kill -9\""
-
-  
+    {uuid, callback} = @runningScripts[scriptId]
+    @runningScripts[scriptId] = false
+    spawn "sh -c \"ps -ef | grep #{gjsDir} | grep #{uuid} | awk '{print $2}' | xargs kill -9\""
+    callback?()

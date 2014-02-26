@@ -112,17 +112,15 @@ Window = (function() {
 
 
   /*
-  remove title bar
+  Remove title bar
+  
+  @note Gnome Shell might freeze if this functions is called too frequently ( interval <= 100ms in my labtop)
   @note The window should be unmaximized before, which is done by setGeometry
-  @note this gjs must be run outside, or the window might crash
+  @note This gjs must be run outside (via runGjsScript), otherwise the window might crash
    */
 
   Window.prototype.removeDecorations = function() {
     var xid;
-    if (this.storage.getItem('decorations') === false) {
-      return false;
-    }
-    this.storage.setItem('decorations', false);
     xid = this.wnckWindow.get_xid();
     return runGjsScript("set-decorations-0", {
       xid: xid
@@ -131,9 +129,10 @@ Window = (function() {
 
 
   /*
-  set geometry hints
+  Set geometry hints
   Overide WM_NORMAL_HINTS(WM_SIZE_HINTS)
   allow setting width & height using px (for Gnome Termianl, Emacs)
+  
   @note the gjs must be run outside, or the window might crash
    */
 
@@ -155,8 +154,6 @@ Window = (function() {
     this.wnckWindow.unmaximize();
     x = geometry.x, y = geometry.y, width = geometry.width, height = geometry.height;
     target = [x, y, width, height];
-    this.removeDecorations();
-    this.setGeometryHints();
     clientGeometry = this.wnckWindow.get_client_window_geometry();
     windowGeometry = this.wnckWindow.get_geometry();
     newTarget = [];

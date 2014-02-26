@@ -15,9 +15,6 @@ const main = function(args) {
     Gtk.init(null, 0);
 
     let gdkWindow = GdkX11.X11Window.foreign_new_for_display(Gdk.Display.get_default(), xid);
-    //gdkWindow.hide(); // hide to avoid carsh
-    // This might cause last_focus_time greater than comparison timestamp
     gdkWindow.set_decorations(0);
-    //gdkWindow.show();
     Gtk.main();
 }

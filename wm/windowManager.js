@@ -94,18 +94,14 @@ WindowManager = (function() {
    */
 
   WindowManager.prototype.setGeometryInterval = function() {
-    return GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, (function(_this) {
+    return GLib.timeout_add(GLib.PRIORITY_DEFAULT, 20, (function(_this) {
       return function() {
         var visibleWindows;
         visibleWindows = _this.getVisibleWindows();
-        global.log("INTERVAL ========");
         visibleWindows.forEach(function(window) {
           var geometry, target;
           target = window.getTargetGeometry();
           geometry = window.getGeometry();
-          global.log(window.wnckWindow.get_name());
-          global.log("TARGET: " + (JSON.stringify(target)));
-          global.log("CLIENT: " + (JSON.stringify(geometry)));
           if ((target != null) && target !== geometry) {
             return window.setGeometry(target);
           }

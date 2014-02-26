@@ -113,6 +113,7 @@ Window = (function() {
 
   /*
   remove title bar
+  @note The window should be unmaximized before, which is done by setGeometry
   @note this gjs must be run outside, or the window might crash
    */
 
@@ -123,7 +124,6 @@ Window = (function() {
     }
     this.storage.setItem('decorations', false);
     xid = this.wnckWindow.get_xid();
-    this.wnckWindow.unmaximize();
     return runGjsScript("set-decorations-0", {
       xid: xid
     });

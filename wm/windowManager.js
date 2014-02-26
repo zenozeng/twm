@@ -89,6 +89,7 @@ WindowManager = (function() {
 
 
   /*
+  @note Some window (like Emacs) might set wm_normal_hints and size after some seconds, so this function should be called by interval.
   @private
    */
 

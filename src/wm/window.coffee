@@ -64,6 +64,7 @@ class Window
 
   ###
   remove title bar
+  @note The window should be unmaximized before, which is done by setGeometry
   @note this gjs must be run outside, or the window might crash
   ###
   removeDecorations: ->
@@ -71,7 +72,6 @@ class Window
       return false
     @storage.setItem 'decorations', false
     xid = @wnckWindow.get_xid()
-    @wnckWindow.unmaximize()
     runGjsScript "set-decorations-0", {xid: xid}
 
   ###

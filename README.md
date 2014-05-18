@@ -1,5 +1,7 @@
 # TWM
 
+__Note: This repository is no longer maintained. You can use http://gfxmonk.net/shellshape/ instead.__
+
 Current, only Gnome Shell 3.8 was supported. I have not tested in Gnome Shell 3.10 yet.
 
 Based on gdk3 and libwnck.
